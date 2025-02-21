@@ -6,7 +6,7 @@ import io
 app = FastAPI()
 
 # Load the Whisper model
-model_size = "tiny.en"  # You can choose other sizes like "base", "small", etc.
+model_size = "large-v3"  # You can choose other sizes like "base", "small", etc.
 model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
 @app.post("/transcribe/")
@@ -25,6 +25,6 @@ async def transcribe_audio(file: UploadFile = File(...)):
 
     return {"transcription": transcription}
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
