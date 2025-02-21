@@ -1,12 +1,22 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from faster_whisper import WhisperModel
 from pydub import AudioSegment
 import io
 
 app = FastAPI()
 
+# Ajoute le middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permet uniquement les origines spÃƒÂ©cifiÃƒÂ©es
+    allow_credentials=True,
+    allow_methods=["*"],  # Permet toutes les mÃƒÂ©thodes HTTP (GET, POST, etc.)
+    allow_headers=["*"],   # Permet tous les en-tÃƒÂªtes
+)
+
 # Load the Whisper model
-model_size = "large-v3"  # You can choose other sizes like "base", "small", etc.
+model_size = "small"  # You can choose other sizes like "base", "small", etc.
 model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
 @app.post("/transcribe/")
