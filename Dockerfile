@@ -1,23 +1,26 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.11-slim
+# Utiliser une image CUDA officielle pour s'assurer de la compatibilité
+FROM nvidia/cuda:12.2.2-devel-ubuntu22.04
 
-# Install ffmpeg
-RUN apt-get update && apt-get install -y ffmpeg
+# Installer Python 3.11 et pip
+RUN apt-get update && apt-get install -y python3.11 python3-pip ffmpeg \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory in the container
+# Installer cuDNN et cuBLAS via pip
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install nvidia-cudnn-cu12 nvidia-cublas-cu12
+
+# Définir le dossier de travail
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Copier et installer les dépendances Python
 COPY requirements.txt .
-
-# Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
+# Copier le reste du code
 COPY . .
 
-# Expose the port the app runs on
+# Exposer le port
 EXPOSE 8000
 
-# Command to run the application
+# Lancer l'application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

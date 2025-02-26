@@ -16,8 +16,8 @@ app.add_middleware(
 )
 
 # Load the Whisper model
-model_size = "small"  # You can choose other sizes like "base", "small", etc.
-model = WhisperModel(model_size, device="cpu", compute_type="int8")
+model_size = "large-v3"  # You can choose other sizes like "base", "small", etc.
+model = WhisperModel(model_size, device="cuda", compute_type="float16")
 
 @app.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...)):
@@ -29,6 +29,8 @@ async def transcribe_audio(file: UploadFile = File(...)):
 
     # Transcribe the audio
     segments, info = model.transcribe("temp_audio.wav", beam_size=5)
+
+    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
     # Prepare the transcription result
     transcription = " ".join([segment.text for segment in segments])
