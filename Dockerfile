@@ -13,9 +13,10 @@ WORKDIR /app
 COPY main.py ./
 
 # Installation des dépendances Python
-RUN pip3 install --no-cache-dir fastapi uvicorn \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 \
-    pydub numpy faster-whisper
+RUN pip3 install --no-cache-dir fastapi uvicorn pydub numpy faster-whisper
+
+# Installation séparée de PyTorch avec l'index CUDA
+RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # Exposition du port de l'API
 EXPOSE 8000
