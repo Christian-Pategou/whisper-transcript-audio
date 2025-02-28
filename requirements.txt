@@ -1,5 +1,10 @@
-fastapi
-uvicorn
-faster-whisper
-pydub
-python-multipart
+langchain==0.3.19
+langchain-chroma==0.2.2
+langchain-community==0.3.18
+langchain-core==0.3.40
+langchain-google-genai==2.0.11
+langchain-huggingface==0.1.2
+fastapi==0.115.6
+python-dotenv
+smolagents==1.4.1
+litellm==1.59.0
