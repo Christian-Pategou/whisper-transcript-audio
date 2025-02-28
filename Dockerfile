@@ -18,7 +18,11 @@ WORKDIR /app
 
 # Copier et installer les dépendances Python
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Installation séparée de PyTorch avec l'index CUDA
+RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # Copier le reste du code
 COPY . .
