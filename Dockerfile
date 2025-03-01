@@ -19,7 +19,6 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt && \
 # DÃ©finir le rÃ©pertoire de travail
 WORKDIR /app
 
-ENV GOOGLE_API_KEY=AIzaSyBnSTLVHR4CAkD-h1BitWq5sxKSn4PSE5g HF_TOKEN=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
 # Copier tout le code source dans le conteneur
 COPY . .
 
