@@ -66,7 +66,7 @@ vector_store = Chroma(
 
 retriever = vector_store.as_retriever(
     search_type="mmr",
-    search_kwargs={ 'k':5, 'lambda_mult': 0.5, 'fetch_k':10},
+    search_kwargs={ 'k':10, 'lambda_mult': 0.5, 'fetch_k':20},
 )
 
 
@@ -87,8 +87,12 @@ prompt_support = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "Tu es un assistant capable de repondre de facon claire et structurer a la question de l'utilisateur en te servant uniquement des informations mise à ta disposition. \
-            context: {context}",
+            """Tu es un assistant capable de repondre de facon claire et structurer a la question de l'utilisateur en te servant uniquement des informations mise à ta disposition.
+            Tes reponses doivent etre bien formatées (au format mardown si possible).
+            Voici le Context: \n\t{context}
+            
+                Pour les questions auqeulles tu n'as pas réfenrence dans le document, reponds en disant qu'il ne t'ai possible de répondre à la question pour le moment.
+            """,
         ),
         ("human", "{question}"),
     ]

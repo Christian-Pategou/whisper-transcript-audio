@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from smolagents import HfApiModel, LiteLLMModel
 from agent import ana_agent as imesy_agent, retrieval_chain
 from prompts import prompt
@@ -17,7 +16,7 @@ model_hf = HfApiModel(
 )
 
 model_gemini = LiteLLMModel(
-    model_id="gemini-2.0-flash-lite-preview-02-05",   #"gemini/gemini-2.0-flash-exp", #"openrouter/google/gemini-2.0-pro-exp-02-05:free"
+    model_id="gemini/gemini-2.0-flash-lite-preview-02-05",   #"gemini/gemini-2.0-flash-exp", #"openrouter/google/gemini-2.0-pro-exp-02-05:free"
     api_key = os.getenv('GOOGLE_API_KEY')
 )
 
@@ -27,17 +26,7 @@ model_chain = ChatGoogleGenerativeAI(
     max_retries=2
     
 )
-
 app = FastAPI()
-
-# Ajoute le middleware CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Permet uniquement les origines spÃ©cifiÃ©es
-    allow_credentials=True,
-    allow_methods=["*"],  # Permet toutes les mÃ©thodes HTTP (GET, POST, etc.)
-    allow_headers=["*"],   # Permet tous les en-tÃªtes
-)
 
 prompt_template = ChatPromptTemplate.from_messages(
     [
