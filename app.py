@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from smolagents import HfApiModel, LiteLLMModel
 from agent import ana_agent as imesy_agent, retrieval_chain
 from prompts import prompt
-
+from fastapi.middleware.cors import CORSMiddleware
 from langchain_google_genai.chat_models import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 import os
@@ -27,6 +27,15 @@ model_chain = ChatGoogleGenerativeAI(
     
 )
 app = FastAPI()
+
+# Ajoute le middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permet uniquement les origines spÃ©cifiÃ©es
+    allow_credentials=True,
+    allow_methods=["*"],  # Permet toutes les mÃ©thodes HTTP (GET, POST, etc.)
+    allow_headers=["*"],   # Permet tous les en-tÃªtes
+)
 
 prompt_template = ChatPromptTemplate.from_messages(
     [
