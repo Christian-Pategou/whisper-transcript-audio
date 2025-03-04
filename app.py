@@ -51,79 +51,25 @@ app.add_middleware(
     allow_headers=["*"],   # Permet tous les en-tÃªtes
 )
 
-
 @app.post("/get_resume/")
 async def get_response(request: QuestionRequest):
     try:
-        # Appel du modèle pour obtenir la réponse
-        response = retrieval_resume.invoke(request.question)
-        
-        return {"response": response}
-    except Exception as e:
-        print(request.question)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/clinique/")
-async def get_clinique(request: QuestionRequest):
-    try:
-        response = retrieval_clinique.invoke(request.question)
-        return response
-        # res_json = retrieval_json.invoke(response)
-        # return dict({
-        #     "respponse": response,
-        #     "response_json" : res_json
-        # })
-    except HTTPException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
-@app.post("/paraclinique/")
-async def get_paraclinique(request: QuestionRequest):
-    try:
-        response = retrieval_paraclinique.invoke(request.question)
-        return response
-        # res_json = retrieval_json.invoke(response)
-        # return dict({
-        #     "respponse": response,
-        #     "response_json" : res_json
-        # })
-    except HTTPException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/get_diagnostic/")
-async def get_diagnostic(request: QuestionRequest):
-    try:
-        response = retrieval_diagnostic.invoke(request.question)
+        response = retrieval_resume.invoke(request.question) 
         return response
     except HTTPException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/get_proposition/")
-async def get_proposition(request: QuestionRequest):
-    try:
-        response = retrieval_proposition_2.invoke(request.question)
-        return response
-        # res_json = retrieval_json.invoke(response)
-        # return dict({
-        #     "respponse": response,
-        #     "response_json" : res_json
-        # })
-    except HTTPException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/get_consultation/")
-async def get_consultation(request: QuestionRequest):
-    try:
-        response = chain_consultation.invoke(request.question) 
-        return response
-        # res_json = retrieval_json.invoke(response)
-        # return dict({
-        #     "respponse": response,
-        #     "response_json" : res_json
-        # })
-    except HTTPException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            return retrieval_resume.invoke(request.question)
+        except HTTPException as e:
+            return f"Probleme de connexion: {e}"
+            # raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            match e.status_code:
+                case 400:
+                    return "Organization restricted"
+                case 429:
+                    return "Rate Limit Exceeted"
+                case _ :
+                    return f"{e}"
     except Exception as e:
         match e.status_code:
             case 400:
@@ -131,7 +77,272 @@ async def get_consultation(request: QuestionRequest):
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    return retrieval_resume.invoke(request.question)
+                except HTTPException as e:
+                    try:
+                        return retrieval_resume.invoke(request.question)
+                    except HTTPException as e:
+                        return f"Probleme de connexion: {e}"
+                    except Exception as e:
+                        match e.status_code:
+                            case 400:
+                                return "Organization restricted"
+                            case 429:
+                                return "Rate Limit Exceeted"
+                            case _ :
+                                return f"{e}"
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+
+
+@app.post("/clinique/")
+async def get_clinique(request: QuestionRequest):
+    try:
+        response = retrieval_clinique.invoke(request.question) 
+        return response
+    except HTTPException as e:
+        try:
+            return retrieval_clinique.invoke(request.question)
+        except HTTPException as e:
+            return f"Probleme de connexion: {e}"
+            # raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+                match e.status_code:
+                    case 400:
+                        return "Organization restricted"
+                    case 429:
+                        return "Rate Limit Exceeted"
+                    case _ :
+                        return f"{e}"
+    except Exception as e:
+        match e.status_code:
+            case 400:
+                return "Organization restricted"
+            case 429:
+                return "Rate Limit Exceeted"
+            case _ :
+                try:
+                    return retrieval_clinique.invoke(request.question)
+                except HTTPException as e:
+                    try:
+                        return retrieval_clinique.invoke(request.question)
+                    except HTTPException as e:
+                        return f"Probleme de connexion: {e}"
+                    except Exception as e:
+                        match e.status_code:
+                            case 400:
+                                return "Organization restricted"
+                            case 429:
+                                return "Rate Limit Exceeted"
+                            case _ :
+                                return f"{e}"
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+    
+
+@app.post("/paraclinique/")
+async def get_paraclinique(request: QuestionRequest):
+    try:
+        response = retrieval_paraclinique.invoke(request.question) 
+        return response
+    except HTTPException as e:
+        try:
+            return retrieval_paraclinique.invoke(request.question)
+        except HTTPException as e:
+            return f"Probleme de connexion: {e}"
+            # raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+                match e.status_code:
+                    case 400:
+                        return "Organization restricted"
+                    case 429:
+                        return "Rate Limit Exceeted"
+                    case _ :
+                        return f"{e}"
+    except Exception as e:
+        match e.status_code:
+            case 400:
+                return "Organization restricted"
+            case 429:
+                return "Rate Limit Exceeted"
+            case _ :
+                try:
+                    return retrieval_paraclinique.invoke(request.question)
+                except HTTPException as e:
+                    try:
+                        return retrieval_paraclinique.invoke(request.question)
+                    except HTTPException as e:
+                        return f"Probleme de connexion: {e}"
+                    except Exception as e:
+                        match e.status_code:
+                            case 400:
+                                return "Organization restricted"
+                            case 429:
+                                return "Rate Limit Exceeted"
+                            case _ :
+                                return f"{e}"
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+
+@app.post("/get_diagnostic/")
+async def get_diagnostic(request: QuestionRequest):
+    try:
+        response = retrieval_diagnostic.invoke(request.question) 
+        return response
+    except HTTPException as e:
+        try:
+            return retrieval_diagnostic.invoke(request.question)
+        except HTTPException as e:
+            return f"Probleme de connexion: {e}"
+            # raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            match e.status_code:
+                case 400:
+                    return "Organization restricted"
+                case 429:
+                    return "Rate Limit Exceeted"
+                case _ :
+                    return f"{e}"
+    except Exception as e:
+        match e.status_code:
+            case 400:
+                return "Organization restricted"
+            case 429:
+                return "Rate Limit Exceeted"
+            case _ :
+                try:
+                    return retrieval_diagnostic.invoke(request.question)
+                except HTTPException as e:
+                    try:
+                        return retrieval_diagnostic.invoke(request.question)
+                    except HTTPException as e:
+                        return f"Probleme de connexion: {e}"
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+    
+
+@app.post("/get_proposition/")
+async def get_proposition(request: QuestionRequest):
+    try:
+        response = retrieval_proposition_2.invoke(request.question) 
+        return response
+    except HTTPException as e:
+        try:
+            return retrieval_proposition_2.invoke(request.question)
+        except HTTPException as e:
+            return f"Probleme de connexion: {e}"
+            # raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            match e.status_code:
+                case 400:
+                    return "Organization restricted"
+                case 429:
+                    return "Rate Limit Exceeted"
+                case _ :
+                    return f"{e}"
+    except Exception as e:
+        match e.status_code:
+            case 400:
+                return "Organization restricted"
+            case 429:
+                return "Rate Limit Exceeted"
+            case _ :
+                try:
+                    return retrieval_proposition_2.invoke(request.question)
+                except HTTPException as e:
+                    try:
+                        return retrieval_proposition_2.invoke(request.question)
+                    except HTTPException as e:
+                        return f"Probleme de connexion: {e}"
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+
+
+@app.post("/get_consultation/")
+async def get_consultation(request: QuestionRequest):
+    try:
+        response = chain_consultation.invoke(request.question) 
+        return response
+    except HTTPException as e:
+        try:
+            return chain_consultation.invoke(request.question) 
+        except HTTPException as e:
+            return f"Probleme de connexion: {e}"
+            # raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            match e.status_code:
+                case 400:
+                    return "Organization restricted"
+                case 429:
+                    return "Rate Limit Exceeted"
+                case _ :
+                    return f"{e}"
+    except Exception as e:
+        match e.status_code:
+            case 400:
+                return "Organization restricted"
+            case 429:
+                return "Rate Limit Exceeted"
+            case _ :
+                try:
+                    return chain_consultation.invoke(request.question)
+                except HTTPException as e:
+                    try:
+                        return chain_consultation.invoke(request.question) 
+                    except HTTPException as e:
+                        return f"Probleme de connexion: {e}"
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+
+
+@app.post("/get_transcirpt/")
+async def get_transcript(resquest:QuestionRequest):
+    try:
+        model = whisper.load_model("small")
+        with open("/audio1.wav", "wb") as file:
+            file.write(resquest.question)
+        transcrib = model.transcribe(audio="./audio1.wav")
+        text = transcrib["text"]
+        return text
+    except Exception as e:
+        print(f"\n\nerror occured \t\t{e}")
 
 
 @app.post("/format-text/")
@@ -145,12 +356,21 @@ async def format_text(request: EditTextRequest):
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    return retrieval_format.invoke([request.input, request.instruct]).replace("\\n", "\n")
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
 
 @app.post("/reg_flag/")
 def reg_flag(request: PrescriptionRequest) -> str:
     try:
-        return retrieval_regflag.invoke([request.input, request.prescription])
+        return retrieval_regflag.invoke([request.input, request.prescription]).replace("\n", "")
     except Exception as e:
         match e.status_code:
             case 400:
@@ -158,10 +378,19 @@ def reg_flag(request: PrescriptionRequest) -> str:
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    return retrieval_regflag.invoke([request.input, request.prescription]).replace("\n", "")
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
 
 @app.post("/format_prescription/")
-def format_prescription(request: QuestionRequest) -> dict:
+def format_prescription(request: QuestionRequest)-> dict:
     try:
         return dict(retrieval_format_prescription.invoke(request.question))
     except Exception as e:
@@ -171,10 +400,20 @@ def format_prescription(request: QuestionRequest) -> dict:
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    return dict(retrieval_format_prescription.invoke(request.question))
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
+
 
 @app.post("/format_paraclinique/")
-def format_paraclinique(request: QuestionRequest) -> dict:
+def format_paraclinique(request: QuestionRequest)-> dict:
     try:
         return dict(retrieval_format_paraclinique.invoke(request.question))
     except Exception as e:
@@ -184,11 +423,20 @@ def format_paraclinique(request: QuestionRequest) -> dict:
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    return dict(retrieval_format_paraclinique.invoke(request.question))
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
 
 
 @app.post("/format_clinique/")
-def format_clinique(request: QuestionRequest) -> dict:
+def format_clinique(request: QuestionRequest)-> dict:
     try:
         resp = retrieval_format_clinique.invoke(request.question)
         return dict(resp)
@@ -199,10 +447,20 @@ def format_clinique(request: QuestionRequest) -> dict:
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    resp = retrieval_format_clinique.invoke(request.question)
+                    return dict(resp)
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"
 
 @app.post("/summarize_consultation/")
-def summarize_consultation(request: QuestionRequest) -> str:
+def summarize_consultation(request: QuestionRequest)-> str:
     try:
         return retrieval_resume_consultation.invoke(request.question)
     except Exception as e:
@@ -212,4 +470,13 @@ def summarize_consultation(request: QuestionRequest) -> str:
             case 429:
                 return "Rate Limit Exceeted"
             case _ :
-                return f"{e}"
+                try:
+                    return retrieval_resume_consultation.invoke(request.question)
+                except Exception as e:
+                    match e.status_code:
+                        case 400:
+                            return "Organization restricted"
+                        case 429:
+                            return "Rate Limit Exceeted"
+                        case _ :
+                            return f"{e}"

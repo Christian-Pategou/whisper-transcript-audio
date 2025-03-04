@@ -36,7 +36,7 @@ model_ggl = ChatGoogleGenerativeAI(
 )
 model = ChatGroq(
     model=os.getenv("GROQ_MODEL_NAME_2"),
-    temperature=0.3,
+    temperature=0.2,
     max_retries=4,
     api_key=os.getenv("GROQ_API_KEY")
 )
@@ -51,39 +51,38 @@ model_format = ChatGroq(
 retrieval_resume = (
     {"input": RunnablePassthrough()}
     | prompt_system_resume
-    | model
+    | model_ggl
     | StrOutputParser()
 )
 
 retrieval_diagnostic = (
     {"input": RunnablePassthrough()}
     | prompt_system_diagnostic
-    | model
+    | model_ggl
     | StrOutputParser()
 )
 
 retrieval_proposition = (
     {"input": RunnablePassthrough()}
     | prompt_system_proposition
-    | model
+    | model_ggl
     | JsonOutputParser()
 )
 
 retrieval_proposition_2 = (
     {"input": RunnablePassthrough()}
     | prompt_system_proposition_2
-    | model_ggl # model # 
+    | model_ggl 
     | JsonOutputParser()
 )
 
-chain_consultation = prompt_consultation_resume | model | JsonOutputParser()
-# chain_consultation = prompt_consultation_resume | model_ggl | JsonOutputParser()
+chain_consultation = prompt_consultation_resume | model_ggl | JsonOutputParser()
 
 retrieval_format = (
     {"input": RunnablePassthrough(),
      "instruction" : RunnablePassthrough()}
     | final_prompt
-    | model # model_ggl
+    | model_ggl 
     | StrOutputParser()
 )
 
@@ -91,27 +90,27 @@ retrieval_regflag = (
     {"input": RunnablePassthrough(),
      "prescription_medecin" : RunnablePassthrough()}
     | regflag_final_prompt
-    | model # model_ggl
+    | model_ggl 
     | StrOutputParser()
 )
 
 retrieval_resume_consultation = (
     {"input": RunnablePassthrough()}
     | resume_consultation_final_prompt
-    | model_format
+    | model_ggl
     | StrOutputParser()
 )
 retrieval_format_clinique = (
     {"input": RunnablePassthrough()}
     | prompt_format_clinique
-    | model_format
+    | model_ggl
     | JsonOutputParser()
 )
 
 retrieval_format_paraclinique = (
     {"input": RunnablePassthrough()}
     | prompt_format_paraclinique
-    | model_format
+    | model_ggl
     | JsonOutputParser()
 )
 
@@ -119,7 +118,7 @@ retrieval_format_paraclinique = (
 retrieval_format_prescription = (
     {"input": RunnablePassthrough()}
     | prompt_format_prescription
-    | model_format
+    | model_ggl
     | JsonOutputParser()
 )
 
@@ -127,20 +126,20 @@ retrieval_format_prescription = (
 retrieval_json = (
     {"input": RunnablePassthrough()}
     | prompt_response_to_json
-    | model
+    | model_ggl
     | JsonOutputParser()
 )
 
 retrieval_clinique = (
     {"input": RunnablePassthrough()}
     | prompt_clinique
-    | model_format
+    | model_ggl
     | JsonOutputParser()
 )
 
 retrieval_paraclinique = (
     {"input": RunnablePassthrough()}
     | prompt_paraclinique
-    | model_format
+    | model_ggl
     | JsonOutputParser()
 )

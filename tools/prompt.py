@@ -916,19 +916,25 @@ prompt_consultation_resume = ChatPromptTemplate.from_messages(
         ("system", """ Vous allez recevoir un transcript d'une consultation entre un médecin et son patient. Votre tâche est d'extraire les informations essentielles
         et de les organiser sous forme d'un fichier JSON structuré. tiens comptes du feminin et du masculin en fonction du sexe du patient (le patient pour un homme et la patiente pour une femme).
         
-        Voici les informations à extraire :
-        "anamnèse" : Contente toi juste de faire un résumé qui prend bien en commpte l'ensemble des informations et des réponses aux questions fournis par le patient. Tous les détails importants sur les symptômes et l'état du patient doivent figurer. Rappelle-toi que c'est toi le medecin donc à la lecture de ton 
-         résumé cela doit sembler être redigé par le medecin et non par une autre personne.
-         Ne mentionnne aucune recomandation ou des phrases du genre :
-          - Il est essentiel de procéder à une évaluation approfondie pour déterminer la cause sous-jacente de ces symptômes et élaborer un plan de traitement adapté.
-          - Resumé de la consultation 
-          - Une évaluation plus approfondie est nécessaire pour déterminer la cause de la douleur au sein gauche et des maux de tête. Des examens complémentaires, 
-           tels qu'une mammographie ou une échographie, pourraient être envisagés pour évaluer la nature de la douleur au sein gauche.
-          - ne mentionne aucune information concernant les examens cliniques, paracliniques, prescriptions. Reste juste sur le résumé de l'anamnèse.
-            Content-toi de juste faire un résumé c'est tout. C'est essentiel de garder cela a l'esprit, c'est crucial de ne fournir que le résume.
-        "examen clinique" : liste des examens cliniques mentionnés ou effectués avec les champs (nom, valeur). Uniquement les examens cliniques mentionnés ou éffectués. 
+        **Voici les informations à extraire** :
+        "anamnèse" : **L'anamnèse** corresponds aux informations fournis par le patient au médédin lors de la consultation (symptômes, antécedant médicaux, traitement en cours). En aucun
+                cas tu ne doit faire mention d'examen lors du récapilatif au niveau de l'anamnèse. Rassure-toi de bien réprendre toutes les informations notament les antécédant
+                médicaux, les symptômes, durée, traitement en cours, etc... C'est crucial et important pour la suite. Contente toi juste de faire un résumé qui prend bien en commpte l'ensemble des informations et des réponses aux questions fournis par le patient. Tous les détails importants sur les symptômes et l'état du patient doivent figurer. Rappelle-toi que c'est toi le medecin donc à la lecture de ton 
+                résumé cela doit sembler être redigé par le medecin et non par une autre personne.
+            Ne mentionnne aucune recomandation ou des phrases du genre :
+                - Il est essentiel de procéder à une évaluation approfondie pour déterminer la cause sous-jacente de ces symptômes et élaborer un plan de traitement adapté.
+                - Resumé de la consultation 
+                - Une évaluation plus approfondie est nécessaire pour déterminer la cause de la douleur au sein gauche et des maux de tête. Des examens complémentaires, 
+                    tels qu'une mammographie ou une échographie, pourraient être envisagés pour évaluer la nature de la douleur au sein gauche.
+                - Ne mentionne aucune information concernant les resultats ou les examens cliniques, paracliniques, prescriptions. Reste juste sur le résumé de l'anamnèse. Par exemple
+                    evite les phrases du genre 'Les examens révèlent un processus inflammatoire avec une CRP et une VS élevées. Le facteur rhumatoïde (AMGFR) est également élevé, et l'anti-CCP est positif, suggérant une polyarthrite rhumatoïde.
+                    L'hémogramme montre de légères anomalies inflammatoires, indiquant un début d'atteinte chronique.' car ces infoormations ne doivent pas se trouver dans l'anmèse.
+                    Content-toi de juste faire un résumé c'est tout. C'est essentiel de garder cela a l'esprit, c'est crucial de ne fournir que le résume.
+        "examen clinique" : **L'examen clinique** corresponds aux examens ou obersavations physiques effectués par le médécin sur le patient. 
+            Liste des examens cliniques mentionnés ou effectués avec les champs (nom, valeur). Uniquement les examens cliniques mentionnés ou éffectués. 
             Tu dois lister tous les examens cliniques effectués que le résultat soit normal ou pas car le but est de pouvoir savoir tous les examens cliniques éffectués.
-        "examen paraclinique" : Si le medecin a effectué une analyse des examens paracliniques fournis par le patient alors recueillir la liste des interprétations des examens paracliniques effectués avec les champs (nom, resultat). 
+        "examen paraclinique" : **L'examen paraclinique** corresponds aux examens (non physique) liés aux examens effectués par le patient auquels le médécin apporte une observation ou une interpretation.
+            Si le medecin a effectué une interpretation des examens paracliniques fournis par le patient alors recueillir la liste des interprétations des examens paracliniques effectués avec les champs (nom, resultat). 
             Uniquement les resultats des examens paracliniques qui ont été interpretés par le medecin. En abscence d'interprétation d'un examen paraclinique celui-ci ne doit pas être pris en compte dans la liste.
         "diagnostic" : Le ou Les diagnostics mentionnés par le médecin.Cela peut être une simple hypothèse ou dit de façon certaines. Marque comme vide le cas échéant.
         "traitement" : Les traitements ou suggestions proposés par le médecin, organisés en plusieurs catégories (Marque comme vide le cas échéant.) :
@@ -936,7 +942,7 @@ prompt_consultation_resume = ChatPromptTemplate.from_messages(
             "Imagerie" : Les examens d'imagerie médicale prescrits (nom et observations associées).
             "Ophtalmologie" : Les recommandations spécifiques pour consulter un ophtalmologue (liste des éléments recommandés).
             "medicaments" : Les médicaments prescrits avec leurs détails (nom, dose, posologie, durée).
-            "recommendation" : le medecin chez qui le patient à été recommendé, laisser vide le cas écheant.
+            "recommendation" : le médécincin chez qui le patient à été recommendé ou envoyé, laisser vide le cas écheant.
             "autres" : Toute autre recommandation ou traitement proposé (nom et observations associées par exemple ca peut etre le fait qu'un medecin fasse la recommandation vers un autre). 
         
         REMARQUE: Ne confond pas examen paraclinique et prescription. les prescriptions se sont des examens que le medecin a demandé ou des medicament prescrit tandis que les examens paracliques sont des examens déja effectués pas le patient auquel le medecin a fait une interpretation.
@@ -976,6 +982,9 @@ prompt_consultation_resume = ChatPromptTemplate.from_messages(
         }}
         Contente-toi juste d'extraire les informations et de les ranger dans les sections corresppondantes. Si pour une section donnée l'information n'est pas disponible
         alors laisse cette section vide au lieu d'ajouter des informatons incorrectes. Et aussi une chose très importante: respecte le format JSON attentu.
+         
+         **NOTE BIEN**:
+            pour les champs **valeur** ne mentionne que la valeur: c'est ce qui est important. Pas besoin d'ajouter les commentaires du médécin comme *élevé, plutôt anormal, normal, etc...* ou tout commentaire similaire.
         """
     ),
     # few_shot_prompt_consult,
@@ -1185,18 +1194,18 @@ final_prompt = ChatPromptTemplate.from_messages(
             Ta mission : Modifier uniquement le texte fourni selon l'instruction donnée.
 
             Règles strictes :
-                - Ne retourne que le texte modifié, sans ajout, explication ni formatage.
+                - Ne retourne que le texte modifié, sans ajout, pas d'explication ni formatage.
                 - Corrige uniquement l'orthographe et la grammaire si nécessaire.
-                - Respecte scrupuleusement l'instruction.
+                - Respecte scrupuleusement l'instruction. 
 
             Si l'instruction est ambiguë :
                 - Tente de la comprendre en la recontextualisant avec le texte fourni.
-                - Si elle reste floue, demande une reformulation claire à l'utilisateur.
+                - Si elle reste floue, c'est-a dire si l'insctruction n'est pas claire alors retourne le texte initial sans rien modifier: c'est primodial.
          """),
          few_shot_prompt,
         ("human", 
-         "Voici le texte à modifier : **{input}** \
-         Et voici les consignes de modification : **{instruction}**")
+         "Voici le texte à modifier : \n**{input}** \
+         Et voici les consignes de modification : \n**{instruction}**")
     ]
 )
 prompt_paraclinique = ChatPromptTemplate.from_messages(
@@ -1495,12 +1504,12 @@ regflag_final_prompt = ChatPromptTemplate.from_messages(
             Ton objectif est de détecter toute incohérence, interaction médicamenteuse, dangereuse, contre-indication, ou exposition excessive aux examens radiologiques, etc... 
             Prends en compte les antécédents médicaux, les traitements en cours, les pathologies, l'âge et les particularités du patient (grossesse, insuffisance rénale, enfant, etc.). 
                 - Si une prescription présente un risque, génère une alerte sous forme d'un message structuré expliquant clairement le danger et suggérant une alternative si possible. 
-                - Si aucune alerte n'est nécessaire, renvoie **"null"**. Sois précis, factuel et rigoureux dans ton analyse tout en évitant de faire les longs discours ou répétant les informations déja disponibles.
+                - Si aucune alerte n'est nécessaire, renvoie **"null"** sans rien ajouter d'autre comme caractère. Sois précis, factuel et rigoureux dans ton analyse tout en évitant de faire les longs discours ou répétant les informations déja disponibles.
 
         ATTENTION
-            Si aucune alerte n'est  nécessaire alors renvoie '*null*'? c'est très important au risque de nuir à la suite du processus. 
+            Si aucune alerte n'est  nécessaire alors renvoie '*null*': c'est très important au risque de nuir à la suite du processus. 
 
-        FORAT ATTENDU: 
+        **FORMAT ATTENDU**: 
         tu dois absolument respecter le format suivant
             - **alerte**: 'explication du motif de l'alerte'
             - **suggestion**: 'suggestion ou solution pour palier à l'alerte'    
