@@ -72,7 +72,7 @@ retrieval_proposition = (
 retrieval_proposition_2 = (
     {"input": RunnablePassthrough()}
     | prompt_system_proposition_2
-    | model # model # 
+    | model_ggl # model # 
     | JsonOutputParser()
 )
 

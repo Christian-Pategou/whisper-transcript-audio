@@ -2,10 +2,10 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
-from typing import Dict
 import uvicorn
+from typing import Dict
 from dotenv import load_dotenv
-from tools.funct import (   
+from tools.funct import (
     retrieval_resume, 
     retrieval_diagnostic,
     retrieval_paraclinique,
@@ -50,6 +50,7 @@ app.add_middleware(
     allow_methods=["*"],  # Permet toutes les mÃ©thodes HTTP (GET, POST, etc.)
     allow_headers=["*"],   # Permet tous les en-tÃªtes
 )
+
 
 @app.post("/get_resume/")
 async def get_response(request: QuestionRequest):
@@ -131,17 +132,6 @@ async def get_consultation(request: QuestionRequest):
                 return "Rate Limit Exceeted"
             case _ :
                 return f"{e}"
-@app.post("/get_transcirpt/")
-async def get_transcript(resquest:QuestionRequest):
-    try:
-        model = whisper.load_model("small")
-        with open("/audio1.wav", "wb") as file:
-            file.write(resquest.question)
-        transcrib = model.transcribe(audio="./audio1.wav")
-        text = transcrib["text"]
-        return text
-    except Exception as e:
-        print(f"\n\nerror occured \t\t{e}")
 
 
 @app.post("/format-text/")
@@ -160,7 +150,7 @@ async def format_text(request: EditTextRequest):
 @app.post("/reg_flag/")
 def reg_flag(request: PrescriptionRequest) -> str:
     try:
-        return retrieval_regflag.invoke([request.input, request.prescription]).replace("\n", "")
+        return retrieval_regflag.invoke([request.input, request.prescription])
     except Exception as e:
         match e.status_code:
             case 400:
@@ -182,7 +172,6 @@ def format_prescription(request: QuestionRequest) -> dict:
                 return "Rate Limit Exceeted"
             case _ :
                 return f"{e}"
-
 
 @app.post("/format_paraclinique/")
 def format_paraclinique(request: QuestionRequest) -> dict:
