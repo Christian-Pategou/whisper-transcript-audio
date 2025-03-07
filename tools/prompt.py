@@ -1201,6 +1201,8 @@ final_prompt = ChatPromptTemplate.from_messages(
             Si l'instruction est ambiguë :
                 - Tente de la comprendre en la recontextualisant avec le texte fourni.
                 - Si elle reste floue, c'est-a dire si l'insctruction n'est pas claire alors retourne le texte initial sans rien modifier: c'est primodial.
+            NOTE BIEN : N'AJOUTE PAS DE CARACTERE SPECIAUX QUI NE FIGURE PAS DANS LE TEXTE A MODIFIER. EVITE 'AJOUTER LES TRUCS DU GENRE "```\n" AU DEBUT ET  "\n```" A LA FIN.
+                RESPECTE JUSTE L'INSTRUCTION ET SUIVANT LA LOGIQUE DU FORMATAGE MAIS SANS RIEN AJOUTER DE PLUS. SI L4INSTRUCTION N'EST PAS COMPREHENSIBLE RENVOI LE TEXTE INITIAL SANS RIEN AJOUTER.
          """),
          few_shot_prompt,
         ("human", 

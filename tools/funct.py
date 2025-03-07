@@ -55,10 +55,24 @@ retrieval_resume = (
     | StrOutputParser()
 )
 
+retrieval_resume_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_system_resume
+    | model
+    | StrOutputParser()
+)
+
 retrieval_diagnostic = (
     {"input": RunnablePassthrough()}
     | prompt_system_diagnostic
     | model_ggl
+    | StrOutputParser()
+)
+
+retrieval_diagnostic_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_system_diagnostic
+    | model
     | StrOutputParser()
 )
 
@@ -69,6 +83,13 @@ retrieval_proposition = (
     | JsonOutputParser()
 )
 
+retrieval_proposition_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_system_proposition
+    | model
+    | JsonOutputParser()
+)
+
 retrieval_proposition_2 = (
     {"input": RunnablePassthrough()}
     | prompt_system_proposition_2
@@ -76,13 +97,29 @@ retrieval_proposition_2 = (
     | JsonOutputParser()
 )
 
+retrieval_proposition_2_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_system_proposition_2
+    | model
+    | JsonOutputParser()
+)
+
 chain_consultation = prompt_consultation_resume | model_ggl | JsonOutputParser()
+chain_consultation_groq = prompt_consultation_resume | model | JsonOutputParser()
 
 retrieval_format = (
     {"input": RunnablePassthrough(),
      "instruction" : RunnablePassthrough()}
     | final_prompt
     | model_ggl 
+    | StrOutputParser()
+)
+
+retrieval_format_groq = (
+    {"input": RunnablePassthrough(),
+     "instruction" : RunnablePassthrough()}
+    | final_prompt
+    | model
     | StrOutputParser()
 )
 
@@ -94,12 +131,28 @@ retrieval_regflag = (
     | StrOutputParser()
 )
 
+retrieval_regflag_groq = (
+    {"input": RunnablePassthrough(),
+     "prescription_medecin" : RunnablePassthrough()}
+    | regflag_final_prompt
+    | model
+    | StrOutputParser()
+)
+
 retrieval_resume_consultation = (
     {"input": RunnablePassthrough()}
     | resume_consultation_final_prompt
     | model_ggl
     | StrOutputParser()
 )
+
+retrieval_resume_consultation_groq = (
+    {"input": RunnablePassthrough()}
+    | resume_consultation_final_prompt
+    | model
+    | StrOutputParser()
+)
+
 retrieval_format_clinique = (
     {"input": RunnablePassthrough()}
     | prompt_format_clinique
@@ -107,10 +160,24 @@ retrieval_format_clinique = (
     | JsonOutputParser()
 )
 
+retrieval_format_clinique_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_format_clinique
+    | model
+    | JsonOutputParser()
+)
+
 retrieval_format_paraclinique = (
     {"input": RunnablePassthrough()}
     | prompt_format_paraclinique
     | model_ggl
+    | JsonOutputParser()
+)
+
+retrieval_format_paraclinique_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_format_paraclinique
+    | model
     | JsonOutputParser()
 )
 
@@ -122,11 +189,25 @@ retrieval_format_prescription = (
     | JsonOutputParser()
 )
 
+retrieval_format_prescription_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_format_prescription
+    | model
+    | JsonOutputParser()
+)
+
 
 retrieval_json = (
     {"input": RunnablePassthrough()}
     | prompt_response_to_json
     | model_ggl
+    | JsonOutputParser()
+)
+
+retrieval_json_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_response_to_json
+    | model
     | JsonOutputParser()
 )
 
@@ -137,9 +218,23 @@ retrieval_clinique = (
     | JsonOutputParser()
 )
 
+retrieval_clinique_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_clinique
+    | model
+    | JsonOutputParser()
+)
+
 retrieval_paraclinique = (
     {"input": RunnablePassthrough()}
     | prompt_paraclinique
     | model_ggl
+    | JsonOutputParser()
+)
+
+retrieval_paraclinique_groq = (
+    {"input": RunnablePassthrough()}
+    | prompt_paraclinique
+    | model
     | JsonOutputParser()
 )
