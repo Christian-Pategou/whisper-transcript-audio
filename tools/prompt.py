@@ -985,6 +985,7 @@ prompt_consultation_resume = ChatPromptTemplate.from_messages(
          
          **NOTE BIEN**:
             pour les champs **valeur** ne mentionne que la valeur: c'est ce qui est important. Pas besoin d'ajouter les commentaires du médécin comme *élevé, plutôt anormal, normal, etc...* ou tout commentaire similaire.
+            Si le transcript que tu reçois n'est pas une conversation medical alors revois le format jSon mais avec des champs vide.
         """
     ),
     # few_shot_prompt_consult,
