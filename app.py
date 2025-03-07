@@ -595,12 +595,12 @@ def format_paraclinique(request:QuestionRequest) -> dict:
 @app.post("/format_clinique/")
 def format_clinique(request:QuestionRequest) -> dict:
     try:
-        return dict(retrieval_clinique_groq.invoke(request.question))
+        return dict(retrieval_format_clinique_groq.invoke(request.question))
     except OutputParserException:
         try:
-            return dict(retrieval_clinique_groq.invoke(request.question))
+            return dict(retrieval_format_clinique_groq.invoke(request.question))
         except OutputParserException:
-            return dict(retrieval_clinique.invoke(request.question))
+            return dict(retrieval_format_clinique.invoke(request.question))
         except Exception as e:
             rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}\n\n")
             return output_parser_exception
@@ -611,16 +611,16 @@ def format_clinique(request:QuestionRequest) -> dict:
                 return "Organization restricted"
             case 429:
                 try:
-                    return dict(retrieval_clinique.invoke(request.question))
+                    return dict(retrieval_format_clinique.invoke(request.question))
                 except OutputParserException:
                     try:
-                        return dict(retrieval_clinique.invoke(request.question))
+                        return dict(retrieval_format_clinique.invoke(request.question))
                     except Exception as e:
                         rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}\n\n")
                         return output_parser_exception
             case _ :
                 try:
-                    return dict(retrieval_clinique.invoke(request.question))
+                    return dict(retrieval_format_clinique.invoke(request.question))
                 except Exception as e:
                     rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}\n\n")
                     match e.status_code:
@@ -628,15 +628,15 @@ def format_clinique(request:QuestionRequest) -> dict:
                             return "Organization restricted"
                         case 429:
                             try:
-                                return dict(retrieval_clinique.invoke(request.question))
+                                return dict(retrieval_format_clinique.invoke(request.question))
                             except OutputParserException:
                                 try:
-                                    return dict(retrieval_clinique.invoke(request.question))
+                                    return dict(retrieval_format_clinique.invoke(request.question))
                                 except Exception as e:
                                     rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}\n\n")
                                     return output_parser_exception
                         case _ :
-                            return dict(retrieval_clinique_groq.invoke(request.question))
+                            return dict(retrieval_format_clinique_groq.invoke(request.question))
 
 @app.post("/summarize_consultation/")
 def summarize_consultation(request:QuestionRequest) -> str:
