@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
-from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from tools.funct import (
     retrieval_resume, retrieval_resume_groq, 
     retrieval_diagnostic, retrieval_diagnostic_groq,
