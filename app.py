@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import whisper, os
+import os
 from dotenv import load_dotenv
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from tools.funct import (
