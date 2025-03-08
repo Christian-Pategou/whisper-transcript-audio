@@ -488,26 +488,26 @@ async def format_text(request: EditTextRequest)-> str:
 @app.post("/reg_flag/")
 def reg_flag(request: PrescriptionRequest) -> str:
     try:
-        return retrieval_regflag_groq.invoke([request.input, request.prescription_medecin]).replace("\n", "").replace("```", "")
+        return retrieval_regflag_groq.invoke([request.input, request.prescription]).replace("\n", "").replace("```", "")
     except Exception as e:
         rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}\n\n")
         match e.status_code:
             case 400:
                 return "Organization restricted"
             case 429:
-                return retrieval_regflag.invoke([request.input, request.prescription_medecin]).replace("\n", "").replace("```", "")
+                return retrieval_regflag.invoke([request.input, request.prescription]).replace("\n", "").replace("```", "")
             case _ :
                 try:
-                    return retrieval_regflag_groq.invoke([request.input, request.prescription_medecin]).replace("\n", "")
+                    return retrieval_regflag_groq.invoke([request.input, request.prescription]).replace("\n", "")
                 except Exception as e:
                     rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}\n\n")
                     match e.status_code:
                         case 400:
                             return "Organization restricted"
                         case 429:
-                            return retrieval_regflag.invoke([request.input, request.prescription_medecin]).replace("\n", "").replace("```", "")
+                            return retrieval_regflag.invoke([request.input, request.prescription]).replace("\n", "").replace("```", "")
                         case _ :
-                            return retrieval_regflag_groq.invoke([request.input, request.prescription_medecin]).replace("\n", "").replace("```", "")
+                            return retrieval_regflag_groq.invoke([request.input, request.prescription]).replace("\n", "").replace("```", "")
 
 @app.post("/format_prescription/")
 def format_prescription(request:QuestionRequest) -> dict:
