@@ -40,6 +40,32 @@ def get_patient_id(name:str)-> str:
     
     return patient_id
 
+# @tool
+# def get_patient_id_filter_by_doctor_id(name:str, id_doctor:str)-> str:
+#     """ ton rôle est de recuperer l'id d'un patient dans le fichier patients.csv à partir de son nom ou son prenom.
+#     Args:
+#         name: le nom ou le prénom du patient.
+#     return:
+#         id du patient
+    
+#     """
+    # import pandas as pd
+    # patients = pd.read_csv('patients.csv')
+    # # consultations = pd.read_csv('consultations.csv')
+
+    # # Find the patient ID 
+    # patient_i1 = patients[patients['firstname'].str.lower()==name.lower()]['_id']
+    # patient_i2 = patients[patients['lastname'].str.lower()==name.lower()]['_id']
+    # if len(patient_i1) > 0:
+    #     patient_id = patient_i1.values[0]
+    # else:
+    #     try:
+    #         patient_id=patient_i2.values[0]
+    #     except IndexError as e:
+    #         patient_id=f"Aucun patient avec le nom {name}"
+    
+    # return patient_id
+
 
 def ana_agent(model):
 
@@ -64,9 +90,14 @@ vector_store = Chroma(
     persist_directory="imest_chroma",  
 )
 
-retriever = vector_store.as_retriever(
+retriever_mmr = vector_store.as_retriever(
     search_type="mmr",
-    search_kwargs={ 'k':10, 'lambda_mult': 0.5, 'fetch_k':20},
+    search_kwargs={ 'k':15, 'lambda_mult': 0.1, 'fetch_k':30},
+)
+
+retriever = vector_store.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k":15}
 )
 
 
@@ -99,7 +130,7 @@ prompt_support = ChatPromptTemplate.from_messages(
 )
 
 retrieval_chain = (
-    {"context": itemgetter("question") | retriever,
+    {"context": itemgetter("question") | retriever_mmr,
     "question": itemgetter("question")}
     | prompt_support
     | model_chain
