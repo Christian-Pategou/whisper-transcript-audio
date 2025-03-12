@@ -3,7 +3,7 @@ name: Build and Push Docker Image for Imesy IA Service
 on:
   push:
     branches:
-      - imasy-ia
+      - imesy-ia
 
 jobs:
   build-and-push:
