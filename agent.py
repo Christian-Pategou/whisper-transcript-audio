@@ -1,138 +1,88 @@
-from smolagents import CodeAgent, tool
-import os
-from dotenv import load_dotenv
-
-from langchain_chroma import Chroma
-from langchain_huggingface.embeddings import HuggingFaceEmbeddings
-from langchain_google_genai.chat_models import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from operator import itemgetter
-
-load_dotenv()
-
-
-############################## agent ################################
-
-@tool
-def get_patient_id(name:str)-> str:
-    """ ton rôle est de recuperer l'id d'un patient dans le fichier patients.csv à partir de son nom ou son prenom.
-    Args:
-        name: le nom ou le prénom du patient.
-    return:
-        id du patient
-    
-    """
-    import pandas as pd
-    patients = pd.read_csv('patients.csv')
-    # consultations = pd.read_csv('consultations.csv')
-
-    # Find the patient ID 
-    patient_i1 = patients[patients['firstname'].str.lower()==name.lower()]['_id']
-    patient_i2 = patients[patients['lastname'].str.lower()==name.lower()]['_id']
-    if len(patient_i1) > 0:
-        patient_id = patient_i1.values[0]
-    else:
-        try:
-            patient_id=patient_i2.values[0]
-        except IndexError as e:
-            patient_id=f"Aucun patient avec le nom {name}"
-    
-    return patient_id
-
-# @tool
-# def get_patient_id_filter_by_doctor_id(name:str, id_doctor:str)-> str:
-#     """ ton rôle est de recuperer l'id d'un patient dans le fichier patients.csv à partir de son nom ou son prenom.
-#     Args:
-#         name: le nom ou le prénom du patient.
-#     return:
-#         id du patient
-    
-#     """
-    # import pandas as pd
-    # patients = pd.read_csv('patients.csv')
-    # # consultations = pd.read_csv('consultations.csv')
-
-    # # Find the patient ID 
-    # patient_i1 = patients[patients['firstname'].str.lower()==name.lower()]['_id']
-    # patient_i2 = patients[patients['lastname'].str.lower()==name.lower()]['_id']
-    # if len(patient_i1) > 0:
-    #     patient_id = patient_i1.values[0]
-    # else:
-    #     try:
-    #         patient_id=patient_i2.values[0]
-    #     except IndexError as e:
-    #         patient_id=f"Aucun patient avec le nom {name}"
-    
-    # return patient_id
+from langgraph.graph import StateGraph, END, START
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph.state import CompiledStateGraph
+from langgraph.checkpoint.memory import InMemorySaver
+from funct import GraphState
+from funct import (
+    retrieve_node,
+    grade_documents_node,
+    generate_node,
+    transform_query_node,
+    send_email_to_support_node,
+    send_email_or_retry_cond,
+    router_answer_cond
+)
 
 
-def ana_agent(model):
+memory = MemorySaver()
 
-    agent = CodeAgent(
-        # system_prompt=prompt,
-        tools=[get_patient_id],
-        model=model,
-        max_steps=5,
-        additional_authorized_imports=["pandas", "os", "numpy", "datetime"],
-        verbosity_level=2 ,
+# define the graph
+def define_graph(memoire: InMemorySaver= memory) -> CompiledStateGraph:
+    builder = StateGraph(GraphState)
+
+    # define the node
+    builder.add_node("retriever", retrieve_node)
+    builder.add_node("grade_document", grade_documents_node)
+    builder.add_node("generate", generate_node)
+    builder.add_node("rewriter", transform_query_node)
+    builder.add_node("send_email_to_support", send_email_to_support_node)
+
+    # add edge
+    builder.add_edge(START, "retriever")
+    builder.add_edge("retriever", "grade_document")
+    builder.add_edge("grade_document", "generate")
+    builder.add_conditional_edges(
+        "generate",
+        router_answer_cond,
+        {
+            "good": END,
+            "bad": "rewriter",
+            "humain": "send_email_to_support",
+        }
     )
 
-    return agent 
+    builder.add_conditional_edges(
+        "rewriter",
+        send_email_or_retry_cond,
+        {
+            "email": "send_email_to_support",
+            "not_email": "retriever",
 
-############################## langchain response ################################
+        }
+    )
 
+    builder.add_edge("send_email_to_support", END)
 
-embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
-vector_store = Chroma(
-    collection_name="imesy_chromadb",
-    embedding_function=embedding,
-    persist_directory="imest_chroma",  
-)
+    # compile the graph
+    graph = builder.compile(checkpointer=memoire)
 
-retriever_mmr = vector_store.as_retriever(
-    search_type="mmr",
-    search_kwargs={ 'k':15, 'lambda_mult': 0.3, 'fetch_k':30},
-)
+    return graph
 
-retriever = vector_store.as_retriever(
-    search_type="similarity",
-    search_kwargs={"k":15}
-)
+def save_graph(graph:CompiledStateGraph, path:str)-> None:
+    _ = graph.get_graph().draw_mermaid_png(output_file_path=path)
 
+if __name__ == "__main__":
+    graph = define_graph()
+    save_graph(graph, "./graph.png")
+    from pprint import pprint
 
-model = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro",
-    api_key=os.getenv("GOOGLE_API_KEY"),
-    max_retries=2
-    
-)
-model_chain = ChatGoogleGenerativeAI(
-    model= "gemini-2.0-flash-exp", #"gemini-2.5-flash",
-    api_key=os.getenv("GOOGLE_API_KEY"),
-    max_retries=2
-    
-)
+    config = {
+    "configurable": {
+        "thread_id": "001"
+    }
+}
+    # Run
+    inputs = {
+        "question": "je n'arrive plus a effectuer les consultations",
+        "max_iter": 0
+    }
+    for output in graph.stream(inputs, config):
+        for key, value in output.items():
+            # Node
+            pprint(f"Node '{key}':")
+            # Optional: print full GraphState at each node
+            # pprint.pprint(value["keys"], indent=2, width=80, depth=None)
+        pprint("\n---\n")
 
-prompt_support = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            """Tu es un assistant capable de repondre de facon claire et structurer a la question de l'utilisateur en te servant uniquement des informations mise à ta disposition.
-            Tes reponses doivent etre bien formatées (au format mardown si possible).
-            Voici le Context: \n\t{context}
-            
-                Pour les questions auxquelles tu n'as pas de réfenrence dans le document, reponds en disant qu'il ne t'ai possible de répondre à la question pour le moment.
-            """,
-        ),
-        ("human", "{question}"),
-    ]
-)
-
-retrieval_chain = (
-    {"context": itemgetter("question") | retriever_mmr,
-    "question": itemgetter("question")}
-    | prompt_support
-    | model_chain
-    | StrOutputParser()
-)
+    # Final generation
+    pprint(value["answer"])
