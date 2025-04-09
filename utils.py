@@ -12,7 +12,7 @@ embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-m
 vector_store = Chroma(
     collection_name="imesy_chromadb_multi_allmini",
     embedding_function=embedding,
-    persist_directory="./../imesy_chromadb",  
+    persist_directory="./imesy_chromadb",  
 )
 
 retriever_mmr = vector_store.as_retriever(
