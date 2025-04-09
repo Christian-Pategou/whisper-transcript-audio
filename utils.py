@@ -7,12 +7,12 @@ from dotenv import load_dotenv
 
 _ = load_dotenv()
 
-embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
+embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
 vector_store = Chroma(
-    collection_name="imesy_chromadb",
+    collection_name="imesy_chromadb_multi_allmini",
     embedding_function=embedding,
-    persist_directory="./../imest_chroma",  
+    persist_directory="./../imesy_chromadb",  
 )
 
 retriever_mmr = vector_store.as_retriever(

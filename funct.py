@@ -1,4 +1,4 @@
-from utils import retriever_mmr
+from utils import vector_store
 from typing_extensions import TypedDict, List, Dict, Any
 from langchain_core.documents import Document
 from chains import (
@@ -60,7 +60,7 @@ def retrieve_node(state:GraphState) -> GraphState:
     
 
     # Retrieval
-    documents = retriever_mmr.invoke(question)
+    documents = vector_store.similarity_search(query=question, k=5)
     print(f"document tourve: {documents}")
     return {"documents": documents, "question": question, "max_iter": state["max_iter"]}
 
@@ -137,7 +137,7 @@ def generate_node(state:GraphState) -> GraphState:
         except Exception as e:
             print(f"\nUne erreur est survenue: GROQ --->>>> {e}\n")
     print(f"llm response {answer}")
-    return {"documents": documents, "question": question, "answer": answer, "max_iter": max_iter}
+    return {"question": question, "answer": answer, "max_iter": max_iter}
 
 
 def router_answer_cond(state:GraphState) -> Literal["bon", "mauvais", "humain"]:
