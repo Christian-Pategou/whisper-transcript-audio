@@ -108,13 +108,14 @@ SYSTEM_ANSWER_QUESTION = """
     - Sur Imesy Il existe un module formation accessible à l'adress https://imesy.com/doctor/support qui permet de se familiariser 
     avec la plateforme. Le lien précedent présente l'ensemble des modules de formations. lorsqu'on clique sur un module on affiche les topics de ce module en question.
     VOICI QUELQUELS TOPIC DISPONIBLE POUR LE MOMENT:
-        https://imesy.com/doctor -> affiche le dashboard du docteur
-        https://imesy.com/doctor/consultations -> regroupe les vidéos pour l'onglet consultation
-        https://imesy.com/doctor/patients -> regroupe les vidéos pour l'onglet patients 
-        https://imesy.com/appointments -> regroupe les vidéos pour l'onglet prise de rendez-vous
-        https://imesy.com//doctor/vidal-> regroupe les vidéos pour l'onglet consultation vidal (la base de données des médicaments)
+        https://imesy.com/doctor/support?query=tableau-de-bord  -> affiche le dashboard du docteur
+        https://imesy.com/doctor/support?query=consultations  -> regroupe les vidéos pour l'onglet consultation
+        https://imesy.com/doctor/support?query=patients  -> regroupe les vidéos pour l'onglet patients 
+        https://imesy.com/doctor/support?query=rendez-vous  -> regroupe les vidéos pour l'onglet prise de rendez-vous
+        https://imesy.com/doctor/support?query=vidal  -> regroupe les vidéos pour l'onglet consultation vidal (la base de données des médicaments)
 
     Ces vidéos permettent ainsi d'aider l'utilisateur en cas de difficulté sur la plateforme. En focntion de la problématique du docteur
     tu devras lui suggérer des liens pour qu'il puisse regarder les videos du modules concernant sa problématiques afin de lui permettre d'avancer.
-               
+    N'oublie pas de formater tes liens au format mardown dans ta réponse. exemple: [tableau de bord](https://imesy.com/doctor/support?query=tableau-de-bord)
+
 """
