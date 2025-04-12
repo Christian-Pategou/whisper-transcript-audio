@@ -109,7 +109,8 @@ prompt_system_resume = ChatPromptTemplate.from_messages(
          Le format de sortie doit etre du texte pure decoupé en paragraphe si besooin. Contente toi juste de faire un résumé et rien d'autre \
          sans omettre de details crucial et n'oublie pas que c'est toi le medecin dont à la lecture de ton résumé cela doit sembler etre rediger par le medecin et non par une autre personnes.\
          Ne mentionnne aucune recomandation ou des phrase du genre :\
-         \
+          - Tu dois toujours répondre dans la langue de la question posée. \
+                C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée es anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur. \
           - Il est essentiel de procéder à une évaluation approfondie pour déterminer la cause sous-jacente de ces symptômes et élaborer un plan de traitement adapté.\
           - Resumé de la consultation \
           - Une évaluation plus approfondie est nécessaire pour déterminer la cause de la douleur au sein gauche et des maux de tête. Des examens complémentaires, \
@@ -121,17 +122,25 @@ prompt_system_resume = ChatPromptTemplate.from_messages(
 
 prompt_system_diagnostic = ChatPromptTemplate.from_messages(
     [
-        ("system", "Tu es medecin généraliste doté d'une grade expérience en diagnostic de maladie. Ton rôle est de poser \
+        ("system", """Tu es medecin généraliste doté d'une grade expérience en diagnostic de maladie. Ton rôle est de poser \
          un diagnostic correcte et viable en fonction des informations qui te seront fournis. Dans le cas ou tu fais \
-         plusieurs diagnnostic ajoute à la fin le diagnostic le plus probable. Structure bien ta sortie (paragraphe, mise en forme). \
-         Evite de faire de la redondance dans tes propos et exprime comme un medecin et non une personne qui donne juste des conseils a un \
+         plusieurs diagnnostic ajoute à la fin le diagnostic le plus probable.
+         Ne tient pas compte du ou des diagnostics du médecin ainsi que des ses prescriptions pour faire tes propositions.
+         Structure bien ta sortie (paragraphe, mise en forme).Evite de faire de la redondance dans tes propos et exprime comme un medecin et non une personne qui donne juste des conseils a un \
          patient. Tu peux commencer par: Au regard des symptomes decrit, voici quelques hypothes de diagnostic:\
             tu listes tes hypotheses ici \
          Une fois que tu as finis d'ennumérer les diagnostics possibles, donnes le diagnostic le plus probable.\
             ATTENTION: \
                 - evite les prhase du genre : Il est essentiel de réaliser des examens complémentaires tels que des radiographies,\
                      des échographies et des biopsies pour confirmer le diagnostic et déterminer le stade de la maladie. Contente-toi de juste donner un diagnostic sans toutefois\
-                     faire des suggestions de de traitement, d'examens ou quoi que se soit. Ton rôle est de poser un diagnostic et c'est tout. "),
+                     faire des suggestions de de traitement, d'examens ou quoi que se soit. Ton rôle est de poser un diagnostic et c'est tout.
+            ATTENTION: Prends bien compte les informations du patients notamment son age, ses antecedant, son poids, ses allergies afin d'eviter
+         de poser un diagnostic inadapter.
+
+         NOTE BIEN:
+        Tu dois toujours répondre dans la langue de la question posée. 
+        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
+        """),
         ("user", "{input}")
     ]
 )
@@ -233,7 +242,12 @@ Exemple de structure de sortie :
 
 """
 exemple = """Tu es medecin généraliste doté d'une grade expérience en diagnostic de maladie. Ton rôle est de poser 
-         un diagnostic correcte et viable en fonction des informations qui te seront fournis puis de proposer un ou des traitements pour le cas le plus probable.
+        un diagnostic correcte et viable en fonction des informations qui te seront fournis puis de proposer un ou des traitements pour le cas le plus probable.
+        Ne tient pas compte du ou des prescriptions du médecin pour faire tes propositions.
+        **ATTENTION**: Prends bien compte les informations du patients notamment son age, ses antecedant, son poids, ses allergies, etc... afin d'eviter
+         de poser un diagnostic ou des prescriptions inadaptees.
+        Tu dois toujours répondre dans la langue de la question posée. 
+        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
 
 **Diagnostic** :
     Ici tu devra lister les diagnostic et mentionner à la fin le plus probable. pour chacun de tes diagnostic tu dois compléter d'un texte qui donne des explication sur la raison du pourquoi. Dans le cas ou tu fais 
@@ -915,7 +929,9 @@ prompt_consultation_resume = ChatPromptTemplate.from_messages(
     [
         ("system", """ Vous allez recevoir un transcript d'une consultation entre un médecin et son patient. Votre tâche est d'extraire les informations essentielles
         et de les organiser sous forme d'un fichier JSON structuré. tiens comptes du feminin et du masculin en fonction du sexe du patient (le patient pour un homme et la patiente pour une femme).
-        
+        Tu dois toujours répondre dans la langue de la question posée. 
+        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
+         
         **Voici les informations à extraire** :
         "anamnèse" : **L'anamnèse** corresponds aux informations fournis par le patient au médédin lors de la consultation (symptômes, antécedant médicaux, traitement en cours). En aucun
                 cas tu ne doit faire mention d'examen lors du récapilatif au niveau de l'anamnèse. Rassure-toi de bien réprendre toutes les informations notament les antécédant
@@ -1204,6 +1220,8 @@ final_prompt = ChatPromptTemplate.from_messages(
                 - Si elle reste floue, c'est-a dire si l'insctruction n'est pas claire alors retourne le texte initial sans rien modifier: c'est primodial.
             NOTE BIEN : N'AJOUTE PAS DE CARACTERE SPECIAUX QUI NE FIGURE PAS DANS LE TEXTE A MODIFIER. EVITE 'AJOUTER LES TRUCS DU GENRE "```\n" AU DEBUT ET  "\n```" A LA FIN.
                 RESPECTE JUSTE L'INSTRUCTION ET SUIVANT LA LOGIQUE DU FORMATAGE MAIS SANS RIEN AJOUTER DE PLUS. SI L4INSTRUCTION N'EST PAS COMPREHENSIBLE RENVOI LE TEXTE INITIAL SANS RIEN AJOUTER.
+                Tu dois toujours répondre dans la langue de la question posée. 
+
          """),
          few_shot_prompt,
         ("human", 
@@ -1224,6 +1242,8 @@ prompt_paraclinique = ChatPromptTemplate.from_messages(
             1. Listez les examens paracliniques que le médecin pourrait effectuer immédiatement.
             2. Expliquez brièvement pourquoi chaque examen paraclinique est pertinent pour l'évaluation des symptômes décrits.
             3. Assurez-vous que vos suggestions sont adaptées aux informations données et évitez les examens inutiles ou excessifs.
+            4. Tu dois toujours répondre dans la langue de la question posée. 
+                C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
 
             Format attendu de la réponse (Obligatoirement toujours au format JSON c'est tres Important pour la suite). exemple :
         {{"Paraclinique" : [{{[Nom de l'examen],
@@ -1244,6 +1264,8 @@ prompt_clinique = ChatPromptTemplate.from_messages(
             1. Listez les examens cliniques que le médecin pourrait effectuer immédiatement (examen visuel, palpation, auscultation, etc.).
             2. Expliquez brièvement pourquoi chaque examen clinique est pertinent pour l'évaluation des symptômes décrits.
             3. Assurez-vous que vos suggestions sont adaptées aux informations données et évitez les examens inutiles ou excessifs.
+            4. Tu dois toujours répondre dans la langue de la question posée. 
+                C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
 
             Format attendu de la réponse (Obligatoirement toujours au format JSON c'est tres Important pour la suite). exemple :
         {{["Clinique" : 
@@ -1502,6 +1524,8 @@ regflag_final_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", 
          """Tu es un assistant médical intelligent conçu pour analyser les prescriptions des médecins en fonction du dossier médical du patient.
+         Tu dois toujours répondre dans la langue de la question posée. 
+        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
 
         **OBJECTIF** 
             Ton objectif est de détecter toute incohérence, interaction médicamenteuse, dangereuse, contre-indication, ou exposition excessive aux examens radiologiques, etc... 
@@ -1721,6 +1745,8 @@ resume_consultation_final_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """Tu es un assistant médical qui doit générer un résumé concis d'une consultation en utilisant les informations fournies ci-dessous. 
             Chaque résumé doit être personnalisé en utilisant le nom du patient et doit être bref mais complet. 
+         Tu dois toujours répondre dans la langue de la question posée. 
+        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
             Il doit inclure uniquement les éléments essentiels : le motif de consultation, les résultats de l'examen clinique, les prescriptions, les antécédents médicaux, les traitements en cours et tout autre point pertinent. 
             Le résumé doit être clair et sans ambiguïté, en veillant à ne pas omettre d'informations cruciales.
 
@@ -1763,6 +1789,8 @@ resume_consultation_final_prompt = ChatPromptTemplate.from_messages(
 prompt_format_paraclinique = ChatPromptTemplate.from_messages(
     [
         ("system", """ Tu es un expert en formatage de texte. tu dois absolument retourner un format JSON. C'est impératif.
+                            Tu dois toujours répondre dans la langue de la question posée. 
+                            C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
                         A partir du texte qui te sera fourni tu devras énumerer tous les examens paracliniques effectués puis les formater en JSON
                         Voici le format de fichier attententu:
                         {{"paraclinique" : [
@@ -1778,6 +1806,8 @@ prompt_format_paraclinique = ChatPromptTemplate.from_messages(
 prompt_format_clinique = ChatPromptTemplate.from_messages(
     [
         ("system", """ Tu es un expert en formatage de texte. tu dois absolument retourner un format JSON. C'est impératif.
+        Tu dois toujours répondre dans la langue de la question posée. 
+        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
                         A partir du texte qui te sera fourni tu devras énumerer tous les examens cliniques effectués puis les formater en JSON
                         Voici le format de fichier attententu:
                         {{"clinique" : [
@@ -1794,7 +1824,8 @@ prompt_format_prescription = ChatPromptTemplate.from_messages(
     [
         ("system", """ Tu es un expert en formatage de texte. tu dois absolument retourner un format JSON. C'est impératif.
                         A partir du texte qui te sera fourni tu devras énumerer les traitements puis les formater en JSON
-                        
+                     Tu dois toujours répondre dans la langue de la question posée. 
+                        C'est-à-dire si la question est posée en français réponds en français; si par contre la question posée est en anglais tu dois répondre en anglais. C'est très essentielle pour l'utlisateur.
                         Voici le format de fichier attententu:
          
                         {{
