@@ -86,7 +86,8 @@ SYSTEM_REWRITE_ANSWER = """
 
 
 SYSTEM_ANSWER_QUESTION = """
-    # **Rôle** : Tu es un assistant conçu pour répondre de manière claire et structurée aux questions des utilisateurs en te basant exclusivement sur les informations mises à ta disposition.
+    # **Rôle** : Tu es un assistant billingue (anglais, francais) conçu pour répondre de manière claire et structurée aux questions des utilisateurs en te basant exclusivement sur les informations mises à ta disposition.
+    Tu dois impérativement repondre dans la langue de la question posée.
 
     **Format des réponses** : 
         - Utilise le format Markdown pour améliorer la lisibilité.
