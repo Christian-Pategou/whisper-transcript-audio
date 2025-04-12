@@ -1,0 +1,18 @@
+{
+    [
+        {
+            "dossier_patient": "Lucas Perrin, 5 ans, a subi 4 scanners crâniens en 6 mois suite à des traumatismes crâniens répétés liés à des chutes.",
+            "prescription_medecin": {
+              "examen": "Scanner crânien",
+              "indication": "Nouvelle chute, suspicion de traumatisme crânien",
+              "date": "2024-06-10"
+            },
+            "alerte_assistant": {
+              "niveau_urgence": "Élevé",
+              "message": "Le patient a subi 4 scanners crâniens en 6 mois. Chez l'enfant, une exposition excessive aux rayons X augmente le risque de cancers à long terme. Vérifiez si une observation clinique ou une échographie transfontanellaire (si possible) est une alternative."
+            }
+        }
+    ],
+   
+}
+  
