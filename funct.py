@@ -94,15 +94,15 @@ def grade_documents_node(state:GraphState) -> GraphState:
     filtered_docs = []
     for d in documents:
         try:
-            print("model google")
-            essaie(model_ggl, d, filtered_docs)
+            print("model groq")
+            essaie(model_groq, d, filtered_docs)
         except Exception as e:
-            print(f"\nUne erreur est survenue: GOOGLE --->>>> {e}\n")
+            print(f"\nUne erreur est survenue: GROQ --->>>> {e}\n")
             try:
-                print("model groq")
-                essaie(model_groq, d)
+                print("model google")
+                essaie(model_ggl, d, filtered_docs)
             except Exception as e:
-                print(f"\nUne erreur est survenue: GROQ --->>>> {e}\n")
+                print(f"\nUne erreur est survenue: GOOGLE --->>>> {e}\n")
     print(f"doc filtrer {filtered_docs}")
     return {"documents": filtered_docs, "question": question}
 
