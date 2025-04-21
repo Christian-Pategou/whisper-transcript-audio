@@ -1,0 +1,46 @@
+version: '3' # Version de Docker Compose à utiliser
+
+services:
+  service1: # Nom du premier service
+    image: nom_de_l_image # Image Docker utilisée pour ce service
+    ports:
+      - "port_hôte:port_conteneur" # Mappage des ports
+    environment:
+      - VARIABLE_1=valeur_1 # Variables d'environnement
+    volumes:
+      - /chemin/hote:/chemin/conteneur # Mappage de volumes
+    depends_on:
+      - service2 # Dépendances entre les services
+
+  service2:
+    # Configuration du deuxième service
+    # ...
+
+networks:
+  mynetwork: # Définition d'un réseau personnalisé
+    driver: bridge # Type de réseau
+
+
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: always
+    container_name: qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    configs:
+      - source: qdrant_config
+        target: /qdrant/config/production.yaml
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+
+configs:
+  qdrant_config:
+    content: |
+      log_level: INFO      
