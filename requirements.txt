@@ -15,3 +15,4 @@ langsmith==0.3.13
 streamlit==1.41.1
 pymongo==4.11.1
 langchain-groq
+hf_xet
