@@ -251,7 +251,7 @@ def send_email_to_support_node(state: GraphState) -> GraphState:
 
     print(f"Envoi de l'email à {RECEIVER_EMAIL}...")
     print(f"SMTP_SERVER: {SMTP_SERVER}")
-    print(f"TYPE_SMTP_PORT: {type(SMTP_PORT)}")
+    # print(f"TYPE_SMTP_PORT: {type(SMTP_PORT)}")
     print(f"SMTP_PORT: {SMTP_PORT}")
     print(f"SENDER_EMAIL: {SENDER_EMAIL}")
 
@@ -263,7 +263,7 @@ def send_email_to_support_node(state: GraphState) -> GraphState:
 
     try:
         # Utiliser un contexte `with` pour assurer la fermeture de la connexion
-        with smtplib.SMTP(host=SMTP_SERVER, port=SMTP_PORT) as server:
+        with smtplib.SMTP(host=SMTP_SERVER, port=587) as server:
             server.ehlo()  # Saluer le serveur
             server.starttls()  # Activer le chiffrement TLS
             server.ehlo()  # Re-saluer après TLS
