@@ -21,7 +21,6 @@ import os
 load_dotenv("./../.env")
 
 SMTP_SERVER = os.getenv("SMTP_SERVER") 
-SMTP_PORT = 587
 SENDER_EMAIL = os.getenv("SENDER_EMAIL") 
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD") 
 RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL") 
@@ -251,15 +250,7 @@ def send_email_to_support_node(state: GraphState) -> GraphState:
 
     print(f"Envoi de l'email à {RECEIVER_EMAIL}...")
     print(f"SMTP_SERVER: {SMTP_SERVER}")
-    # print(f"TYPE_SMTP_PORT: {type(SMTP_PORT)}")
-    print(f"SMTP_PORT: {SMTP_PORT}")
     print(f"SENDER_EMAIL: {SENDER_EMAIL}")
-
-    try:
-        SMTP_PORT = int(SMTP_PORT)
-    except (ValueError, TypeError):
-        print(f"ERREUR: Le port SMTP '{SMTP_PORT}' n'est pas un nombre valide.")
- 
 
     try:
         # Utiliser un contexte `with` pour assurer la fermeture de la connexion
@@ -286,7 +277,7 @@ def send_email_to_support_node(state: GraphState) -> GraphState:
         print("Vérifiez également si l'accès aux applications moins sécurisées est nécessaire (NON RECOMMANDÉ).")
         return {"answer": "Désolé, une erreur technique (authentification) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
     except smtplib.SMTPConnectError:
-        print(f"ERROR: Échec de la connexion au serveur SMTP : {SMTP_SERVER}:{SMTP_PORT}")
+        print(f"ERROR: Échec de la connexion au serveur SMTP : {SMTP_SERVER}:587")
         return {"answer": "Désolé, une erreur technique (connexion serveur) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
     except smtplib.SMTPServerDisconnected:
          print(f"ERROR: Déconnexion inattendue du serveur SMTP {SMTP_SERVER}")
