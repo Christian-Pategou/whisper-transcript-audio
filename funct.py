@@ -249,6 +249,18 @@ def send_email_to_support_node(state: GraphState) -> GraphState:
     # Définir le contenu du message (texte simple)
     message.set_content(body, subtype='plain', charset='utf-8') # Assure l'encodage correct
 
+    print(f"Envoi de l'email à {RECEIVER_EMAIL}...")
+    print(f"SMTP_SERVER: {SMTP_SERVER}")
+    print(f"TYPE_SMTP_PORT: {type(SMTP_PORT)}")
+    print(f"SMTP_PORT: {SMTP_PORT}")
+    print(f"SENDER_EMAIL: {SENDER_EMAIL}")
+
+    try:
+        SMTP_PORT = int(SMTP_PORT)
+    except (ValueError, TypeError):
+        print(f"ERREUR: Le port SMTP '{SMTP_PORT}' n'est pas un nombre valide.")
+ 
+
     try:
         # Utiliser un contexte `with` pour assurer la fermeture de la connexion
         with smtplib.SMTP(host=SMTP_SERVER, port=SMTP_PORT) as server:
