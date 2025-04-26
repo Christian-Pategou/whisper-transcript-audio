@@ -2,6 +2,7 @@ langchain==0.3.19
 langchain-chroma==0.2.2
 langchain-community==0.3.18
 langchain-core==0.3.40
+langchain-groq==0.2.5
 langchain-google-genai==2.0.11
 langchain-huggingface==0.1.2
 langgraph==0.2.74
@@ -14,6 +15,9 @@ langgraph-sdk==0.1.53
 langsmith==0.3.13
 streamlit==1.41.1
 pymongo==4.11.1
-langchain-groq
+yagmail==0.15.293
 hf_xet
 langchain-ollama
+apscheduler==3.11.0
+loguru== 0.7.3
+
