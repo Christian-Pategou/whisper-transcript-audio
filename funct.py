@@ -1,18 +1,21 @@
 from utils import vector_store
 from typing_extensions import TypedDict, List, Dict, Any
 from langchain_core.documents import Document
+import db
 from chains import (
     chain_retrieval_grader_document,
     chain_asnwer_question,
     chain_grader_question_answer,
     chain_rewriter_question,
 )
-from utils import model_ggl, model_groq
+from utils import model_ggl, model_groq, model_ollama
 
+from logger import logger
 from typing import Literal
 from chains import GradeAnswer
 
 import smtplib
+# import yagmail
 from email.message import EmailMessage 
 
 from dotenv import load_dotenv
@@ -21,6 +24,7 @@ import os
 load_dotenv("./../.env")
 
 SMTP_SERVER = os.getenv("SMTP_SERVER") 
+SMTP_PORT = os.getenv("SMTP_PORT", 587) 
 SENDER_EMAIL = os.getenv("SENDER_EMAIL") 
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD") 
 RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL") 
@@ -93,7 +97,7 @@ def grade_documents_node(state:GraphState) -> GraphState:
     filtered_docs = []
     for d in documents:
         try:
-            print("model groq")
+            print("filtered docs: model groq") # groq
             essaie(model_groq, d, filtered_docs)
         except Exception as e:
             print(f"\nUne erreur est survenue: GROQ --->>>> {e}\n")
@@ -124,10 +128,12 @@ def generate_node(state:GraphState) -> GraphState:
 
     # RAG generation
     def answers(model):
-        return chain_asnwer_question(model).invoke({"context": documents, "question": question})
+        logger.info(f"links {db.support_links_context}")
+        print(f"\n {db.support_links_context}\n")
+        return chain_asnwer_question(model).invoke({"context": documents, "links": db.support_links_context, "question": question})
     try:
         print("model google")
-        answer = answers(model_ggl)
+        answer = answers(model_ggl) # google
     except Exception as e:
         print(f"\nUne erreur est survenue: GOOGLE --->>>> {e}\n")
         try:
@@ -147,8 +153,8 @@ def router_answer_cond(state:GraphState) -> Literal["bon", "mauvais", "humain"]:
         return answer_grader.invoke({"question": state["question"], "answer": state["answer"]})
     
     try:
-        print("model google")
-        grader = check_answer(model_ggl)
+        print(" evaluation response: model google")
+        grader = check_answer(model_ggl) # ggl
     except Exception as e:
         print(f"\nUne erreur est survenue: GOOGLE --->>>> {e}\n")
         try:
@@ -166,6 +172,7 @@ def router_answer_cond(state:GraphState) -> Literal["bon", "mauvais", "humain"]:
             return "bad"
         case _:
             print("humain")
+            logger.error(f"{state["question"]}")
             return "humain"
         
 
@@ -188,7 +195,7 @@ def transform_query_node(state:GraphState) -> GraphState:
 
     # Re-write question
     try:
-        print("model google")
+        print(" rewrite question: model google")
         better_question = chain_rewriter_question(model_ggl).invoke({"question": question})
     except Exception as e:
         print(f"\nUne erreur est survenue: GOOGLE --->>>> {e}\n")
@@ -213,78 +220,153 @@ def send_email_or_retry_cond(state:GraphState) -> Literal["not_email", "email"]:
     
 
 def send_email_to_support_node(state: GraphState) -> GraphState: 
-    """
-    Envoie un email au support humain avec la question de l'utilisateur.
-    Retourne un dictionnaire indiquant le succès ou l'échec et un message pour l'utilisateur.
-    Args:
-        state (dict): The current graph GraphState
 
-    Returns:
-        state (dict): Updates question key with a re-phrased answer
-    """
-    print("--- ENTER TO SEND EMAIL FUNCTION ---")
-    question = state["question"] 
+    import requests
+    from datetime import datetime
+    import pytz
 
-    # Créer l'objet EmailMessage
-    message = EmailMessage()
-    message['Subject'] = f"Question non répondue nécessitant intervention : {question[:50]}..."
-    message['From'] = SENDER_EMAIL
-    message['To'] = RECEIVER_EMAIL
+    def generate_ticket_number():
+        try:
+            with open("ticket_counter.txt", "r+") as f:
+                count = int(f.read().strip()) + 1
+                f.seek(0)
+                f.write(str(count))
+        except FileNotFoundError:
+            count = 1
+            with open("ticket_counter.txt", "w") as f:
+                f.write(str(count))
+        
+        return f"T{count:03d}"
+    
+    ticket_number = generate_ticket_number()
 
-    # Corps de l'email
-    body = f"""Bonjour,
+    # Fuseau horaire Africa/Douala
+    tz = pytz.timezone('Africa/Douala')
 
-    Ceci est un message automatique du système de support IMESY.
+    # Date actuelle dans ce fuseau horaire
+    now = datetime.now(tz)
 
-    Impossible de répondre automatiquement à la question suivante posée par un utilisateur :
+    # Format désiré : "DD.MM.YYYY HH:mm"
+    formatted_date = now.strftime('%d.%m.%Y %H:%M')
 
-    "{question}"
+    # URL de ton webhook Make
+    webhook_url = os.getenv("WEBHOOKS_MAKE")
 
-    Merci de prendre le relais.
-
-    Cordialement,
-    Système de Support Automatisé IMESY
-"""
-    # Définir le contenu du message (texte simple)
-    message.set_content(body, subtype='plain', charset='utf-8') # Assure l'encodage correct
-
-    print(f"Envoi de l'email à {RECEIVER_EMAIL}...")
-    print(f"SMTP_SERVER: {SMTP_SERVER}")
-    print(f"SENDER_EMAIL: {SENDER_EMAIL}")
+    # Les données que tu veux envoyer
+    data = {
+        "question": state["question"],
+        "date": formatted_date,
+        "ticket": ticket_number
+    }
 
     try:
-        # Utiliser un contexte `with` pour assurer la fermeture de la connexion
-        with smtplib.SMTP(host=SMTP_SERVER, port=587) as server:
-            server.ehlo()  # Saluer le serveur
-            server.starttls()  # Activer le chiffrement TLS
-            server.ehlo()  # Re-saluer après TLS
-            print(f"Authentification avec {SENDER_EMAIL}...")
-            # Utiliser la variable SENDER_EMAIL (string) pour l'authentification
-            server.login(SENDER_EMAIL, SENDER_PASSWORD)
-            print(f"Envoi de l'email à {RECEIVER_EMAIL}...")
-            # Utiliser send_message pour les objets EmailMessage
-            server.send_message(message)
-            # Alternative si vous utilisiez MIMEMultipart:
-            # server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, message.as_string())
-            print(f"---- EMAIL SENT SUCCESSFULLY TO {RECEIVER_EMAIL} ----")
-            # Retourner un message pour l'utilisateur final et potentiellement un statut
-        return {"answer": "Votre question a bien été transmise à notre équipe de support. Nous vous reviendrons dans les plus brefs délais."}
+        # Envoi de la requête POST
+        response = requests.post(webhook_url, json=data)
 
-    except smtplib.SMTPAuthenticationError:
-        print("ERROR: Échec de l'authentification SMTP.")
-        print("Vérifiez l'e-mail/mot de passe.")
-        print("Si vous utilisez Gmail avec 2FA, assurez-vous d'utiliser un 'Mot de passe d'application'.")
-        print("Vérifiez également si l'accès aux applications moins sécurisées est nécessaire (NON RECOMMANDÉ).")
-        return {"answer": "Désolé, une erreur technique (authentification) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
-    except smtplib.SMTPConnectError:
-        print(f"ERROR: Échec de la connexion au serveur SMTP : {SMTP_SERVER}:587")
-        return {"answer": "Désolé, une erreur technique (connexion serveur) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
-    except smtplib.SMTPServerDisconnected:
-         print(f"ERROR: Déconnexion inattendue du serveur SMTP {SMTP_SERVER}")
-         return {"answer": "Désolé, une erreur technique (déconnexion serveur) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
+        # Vérification de la réponse
+        if response.status_code == 200:
+            logger.info(f"sucessfully send playload to make")
+        message = f"""Merci pour votre question. Nous n'avons pas pu y répondre immédiatement, mais pas d'inquiétude un ticket sous le numéro {ticket_number} a été ouvert.
+            Nous allons prendre le temps de bien l'analyser pour vous apporter une réponse précise et utile.
+            N’hésitez pas à nous écrire si vous souhaitez compléter ou modifier votre demande.
+            Merci de votre confiance !
+        """
+        state["answer"] = message
+        return {"answer": message}
     except Exception as e:
-        # Capturer toute autre exception (ex: problème réseau, erreur inattendue)
-        print(f"ERROR: Une erreur inattendue est survenue lors de l'envoi de l'e-mail : {e}")
-        import traceback
-        traceback.print_exc() # Affiche la trace complète pour le débogage
-        return {"answer": f"Désolé, une erreur technique ({type(e).__name__}) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
+        logger.exception(f"une erreur inconu est survenu: {e}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#     """
+#     Envoie un email au support humain avec la question de l'utilisateur.
+#     Retourne un dictionnaire indiquant le succès ou l'échec et un message pour l'utilisateur.
+#     Args:
+#         state (dict): The current graph GraphState
+
+#     Returns:
+#         state (dict): Updates question key with a re-phrased answer
+#     """
+#     print("--- ENTER TO SEND EMAIL FUNCTION ---")
+#     question = state["question"] 
+
+#     # Créer l'objet EmailMessage
+#     message = EmailMessage()
+#     message['Subject'] = f"Question non répondue nécessitant intervention : {question[:50]}..."
+#     message['From'] = SENDER_EMAIL
+#     message['To'] = RECEIVER_EMAIL
+
+#     # Corps de l'email
+#     body = f"""Bonjour,
+
+#     Ceci est un message automatique du système de support IMESY.
+
+#     Impossible de répondre automatiquement à la question suivante posée par un utilisateur :
+
+#     "{question}"
+
+#     Merci de prendre le relais.
+
+#     Cordialement,
+#     Système de Support Automatisé IMESY
+# """
+#     # Définir le contenu du message (texte simple)
+#     message.set_content(body, subtype='plain', charset='utf-8') # Assure l'encodage correct
+#     try:
+#         SMTP_PORT = int(SMTP_PORT)
+#     except (ValueError, TypeError):
+#         print(f"ERREUR: Le port SMTP '{SMTP_PORT}' n'est pas un nombre valide.")
+
+#     try:
+#         # Utiliser un contexte `with` pour assurer la fermeture de la connexion
+#         with smtplib.SMTP(host=SMTP_SERVER, port=SMTP_PORT) as server:
+#             server.ehlo()  # Saluer le serveur
+#             server.starttls()  # Activer le chiffrement TLS
+#             server.ehlo()  # Re-saluer après TLS
+#             print(f"Authentification avec {SENDER_EMAIL}...")
+#             # Utiliser la variable SENDER_EMAIL (string) pour l'authentification
+#             server.login(SENDER_EMAIL, SENDER_PASSWORD)
+#             print(f"Envoi de l'email à {RECEIVER_EMAIL}...")
+#             # Utiliser send_message pour les objets EmailMessage
+#             server.send_message(message)
+#             # Alternative si vous utilisiez MIMEMultipart:
+#             # server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, message.as_string())
+#             print(f"---- EMAIL SENT SUCCESSFULLY TO {RECEIVER_EMAIL} ----")
+#             # Retourner un message pour l'utilisateur final et potentiellement un statut
+#         return {"answer": "Votre question a bien été transmise à notre équipe de support. Nous vous reviendrons dans les plus brefs délais."}
+
+#     except smtplib.SMTPAuthenticationError:
+#         print("ERROR: Échec de l'authentification SMTP.")
+#         print("Vérifiez l'e-mail/mot de passe.")
+#         print("Si vous utilisez Gmail avec 2FA, assurez-vous d'utiliser un 'Mot de passe d'application'.")
+#         print("Vérifiez également si l'accès aux applications moins sécurisées est nécessaire (NON RECOMMANDÉ).")
+#         return {"answer": "Désolé, une erreur technique (authentification) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
+#     except smtplib.SMTPConnectError:
+#         print(f"ERROR: Échec de la connexion au serveur SMTP : {SMTP_SERVER}:{SMTP_PORT}")
+#         return {"answer": "Désolé, une erreur technique (connexion serveur) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
+#     except smtplib.SMTPServerDisconnected:
+#          print(f"ERROR: Déconnexion inattendue du serveur SMTP {SMTP_SERVER}")
+#          return {"answer": "Désolé, une erreur technique (déconnexion serveur) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}
+#     except Exception as e:
+#         # Capturer toute autre exception (ex: problème réseau, erreur inattendue)
+#         print(f"ERROR: Une erreur inattendue est survenue lors de l'envoi de l'e-mail : {e}")
+#         import traceback
+#         traceback.print_exc() # Affiche la trace complète pour le débogage
+#         return {"answer": f"Désolé, une erreur technique ({type(e).__name__}) a empêché la transmission de votre question. Veuillez réessayer plus tard ou contacter le support directement."}

@@ -1,6 +1,7 @@
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq
 import os
 from dotenv import load_dotenv
@@ -12,8 +13,14 @@ embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-m
 vector_store = Chroma(
     collection_name="imesy_chromadb_multi_allmini",
     embedding_function=embedding,
-    persist_directory="./imesy_chromadb",  
+    persist_directory="./imesy_chromadb",
 )
+
+# vector_store = Chroma(
+#     collection_name="josue_data",
+#     embedding_function=embedding,
+#     persist_directory="./../../Josue_chromadb",
+# )
 
 retriever_mmr = vector_store.as_retriever(
     search_type="mmr",
@@ -32,4 +39,12 @@ model_groq = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY"),
     temperature=0,
     max_retries=3
-)   
+)  
+
+pod_id = "emsuxxjl8xitpt"
+
+model_ollama =  ChatOllama(
+    model="gemma3:12b-it-q4_K_M",
+    base_url=f"https://{pod_id}-11434.proxy.runpod.net",
+    keep_alive=-1
+)
