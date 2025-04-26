@@ -16,3 +16,4 @@ streamlit==1.41.1
 pymongo==4.11.1
 langchain-groq
 hf_xet
+langchain-ollama
