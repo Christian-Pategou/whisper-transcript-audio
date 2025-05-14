@@ -11,7 +11,13 @@ retrieval_diagnostic_lang, retrieval_proposition_2_lang, chain_consultation_lang
 retrieval_regflag_lang, retrieval_format_prescription_lang, retrieval_format_paraclinique_lang, retrieval_format_clinique_lang
 )
 from tools.funct import model_ggl, model
+import logging
 
+# Basic configuration
+logging.basicConfig(
+    level=logging.DEBUG,  # Set the minimum level to capture
+    format='%(asctime)s - %(levelname)s - %(message)s',
+)
 
 class QuestionRequest(BaseModel):
     question: str
@@ -25,7 +31,6 @@ class EditTextRequest(BaseModel):
     input:str
     instruct:str
     model: str
-
 
 
 def extract_json_from_text(text):
@@ -86,18 +91,22 @@ output_parser_exception = {
 
 @app.post("/get_resume/")
 async def get_response(request: QuestionRequest)-> str:
+    langue = detect(request.question)
+    logging.debug("Génération du résumé")
+    logging.debug("question envoyé: " + str(request.question))
+    logging.debug("langue detecté: " + str(langue))
+    
     try:
-        return retrieval_resume_lang(detect(request.question), model).invoke(request.question)
-        
+        return retrieval_resume_lang(langue, model).invoke(request.question)
     except HTTPException as e:
         try:
-            return retrieval_resume_lang(detect(request.question), model).invoke(request.question)
+            return retrieval_resume_lang(langue, model).invoke(request.question)
         except HTTPException as e:
             return f"Probleme de connexion: {e}"
             # raise HTTPException(status_code=500, detail=str(e))
         except OutputParserException as e:
             try:
-                return retrieval_resume_lang(detect(request.question), model).invoke(request.question)
+                return retrieval_resume_lang(langue, model).invoke(request.question)
             except OutputParserException:
                 return output_parser_exception
         except Exception as e:
@@ -107,10 +116,10 @@ async def get_response(request: QuestionRequest)-> str:
                     return "Organization restricted (Groq)"
                 case 429:
                     try:
-                        return retrieval_resume_lang(detect(request.question), model_ggl).invoke(request.question)
+                        return retrieval_resume_lang(langue, model_ggl).invoke(request.question)
                     except OutputParserException:
                         try:
-                            return retrieval_resume_lang(detect(request.question), model).invoke(request.question)
+                            return retrieval_resume_lang(langue, model).invoke(request.question)
                         except Exception as e:
                             rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}")
                             return output_parser_exception
@@ -121,9 +130,9 @@ async def get_response(request: QuestionRequest)-> str:
                             case 429:
                                 return "Rate Limit Exceeted (Google)"
                             case _ :
-                                return retrieval_resume_lang(detect(request.question), model_ggl).invoke(request.question)
+                                return retrieval_resume_lang(langue, model_ggl).invoke(request.question)
                 case _ :
-                    return retrieval_resume_lang(detect(request.question), model).invoke(request.question)
+                    return retrieval_resume_lang(langue, model).invoke(request.question)
     except Exception as e:
         rich.print(f"\n\n ########## erreur #############\n\n {e}\n\n ########## methode #############\n\n {dir(e)}")
         match e.status_code:
@@ -131,7 +140,7 @@ async def get_response(request: QuestionRequest)-> str:
                 return "Organization restricted (Groq)"
             case 429:
                 try:
-                    return retrieval_resume_lang(detect(request.question), model_ggl).invoke(request.question)
+                    return retrieval_resume_lang(langue, model_ggl).invoke(request.question)
                 except Exception as e:
                     match e.status_code:
                         case 400:
@@ -139,9 +148,9 @@ async def get_response(request: QuestionRequest)-> str:
                         case 429:
                             return "Rate Limit Exceeted (Google)"
                         case _ :
-                            return retrieval_resume_lang(detect(request.question), model).invoke(request.question)
+                            return retrieval_resume_lang(langue, model).invoke(request.question)
             case _ :
-                return retrieval_resume_lang(detect(request.question), model_ggl).invoke(request.question)
+                return retrieval_resume_lang(langue, model_ggl).invoke(request.question)
 
 @app.post("/clinique/")
 async def get_clinique(request: QuestionRequest)-> dict:
@@ -679,108 +688,3 @@ def summarize_consultation(request:QuestionRequest) -> str:
                              return retrieval_resume_consultation_lang(detect(request.question), model_ggl).invoke(request.question)
                         case _ :
                              return retrieval_resume_consultation_lang(detect(request.question), model).invoke(request.question)
-
-# @app.post("/totalEnergieCongo")
-# async def total_energie_congo(question:str, embedding)->str:
-#     # load database
-#     from qdrant_client import QdrantClient
-#     from langchain_qdrant import QdrantVectorStore
-#     client = QdrantClient(url="https://recette-apps.pategou.com:61268/")
-#     # try:
-#     #     print(client.get_collections())
-#     # except Exception as e:
-#     #     print(f"Erreur : {e}")
-#     db = QdrantVectorStore(
-#         client=client,
-#         collection_name="TotalEnergieCongo",
-#         embedding=embedding
-#     )
-
-#     retriever = db.as_retriever(
-#         search_type="mmr", 
-#             search_kwargs={
-#                 "k": 10,
-#                 "fetch_k":20,
-#                 "lambda_mult":0.8,
-#             }
-#     ) 
-
-#     from langchain_groq import ChatGroq
-#     from langchain_core.prompts import ChatPromptTemplate
-#     from langchain_core.output_parsers import StrOutputParser
-#     from langchain_core.runnables import RunnablePassthrough
-
-#     template = """Répondez à la question en vous basant uniquement sur le contexte suivant:
-
-#     {context}
-
-#     Question: {question}
-#     """
-#     prompt = ChatPromptTemplate.from_template(template)
-#     model = ChatGroq(
-#         model=os.getenv("GROQ_MODEL_NAME_2"),
-#         temperature=.3,
-#         api_key=os.getenv("GROQ_API_KEY")
-#     )
-
-    
-#     def format_docs(docs):
-#         return "\n\n".join([d.page_content for d in docs])
-
-
-#     chain = (
-#         {"context": retriever | format_docs, "question": RunnablePassthrough()}
-#         | prompt
-#         | model
-#         | StrOutputParser()
-#     )
-
-#     return chain.invoke(question)
-
-# @app.post("/transcribe-audio/")
-# async def transcribe_audio(file: UploadFile = File(...)):
-#     # print(f"start time : {time.time()}")
-#     temp_audio_file = "temp_audio.mp3"
-#     if os.path.exists(temp_audio_file):
-#         # Supprimer le fichier temporaire après transcription
-#         os.remove(temp_audio_file)
-#     try:
-#         # Vérifier que le fichier est bien un fichier audio
-#         if file.content_type not in ["audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp3"]:
-#             raise HTTPException(status_code=400, detail="Invalid file type. Please upload an audio file.")
- 
-#         # Charger le modèle Whisper
-#         model = whisper.load_model("small")
-#         import time
-#         # Lire le fichier audio envoyé
-#         print(f"Lecture time : {time.time()}")
-#         audio = await file.read()
-
-#         # import base64
-
-#         # # ... code précédent ...
-
-#         # with open(temp_audio_file, "rb") as temp_file:
-#         #     audio_content = temp_file.read()
-#         #     # Convertir les données audio en base64 pour l'affichage
-#         #     encoded_audio = base64.b64encode(audio_content).decode()
-#         #     print(f"Contenu du fichier audio (base64): {encoded_audio}")
-            
-#         # Sauvegarder temporairement le fichier audio
-        
-#         with open(temp_audio_file, "wb") as temp_file:
-#             temp_file.write(audio)
- 
-#         # Transcrire le fichier audio avec Whisper
-#         # print(f"start transcribe time : {time.time()}")
-#         result = model.transcribe(temp_audio_file)
-#         # print(f"end transcribe time : {time.time()}")
-        
- 
-#         # Renvoyer le texte transcrit
-#         print(f"\n\n {result["text"]}")
-#         # print(f"\n\n\n end time : {time.time()}")
-#         return {"text": result["text"]}
- 
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Error during transcription: {str(e)}")
