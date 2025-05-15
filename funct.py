@@ -172,7 +172,7 @@ def router_answer_cond(state:GraphState) -> Literal["bon", "mauvais", "humain"]:
             return "bad"
         case _:
             print("humain")
-            logger.error(state["question"])
+            logger.error(f"{state["question"]}")
             return "humain"
         
 
