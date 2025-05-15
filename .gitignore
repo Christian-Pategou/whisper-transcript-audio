@@ -1,0 +1,6 @@
+imesy_whatsapp_env
+./logs/__pycache__
+/__pycache__
+*.pyc
+
+.env

@@ -1,0 +1,317 @@
+2025-04-01 10:26:07 +01:00 | ERROR | process_audio.py:process_audio:download_audio:74 - ❌ Erreur lors du téléchargement de l'audio 1715785975952843: HTTPSConnectionPool(host='graph.facebook.com', port=443): Read timed out. (read timeout=None)
+Traceback (most recent call last):
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    │    │              └ <urllib3.connection.HTTPSConnection object at 0x0000021936F48E90>
+    │    └ <function HTTPSConnectionPool._validate_conn at 0x0000021935E093A0>
+    └ <urllib3.connectionpool.HTTPSConnectionPool object at 0x0000021936F496A0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    │    └ <function HTTPSConnection.connect at 0x0000021935E00CC0>
+    └ <urllib3.connection.HTTPSConnection object at 0x0000021936F48E90>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+                        └ <function _ssl_wrap_socket_and_match_hostname at 0x0000021935DCB600>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+               └ <function ssl_wrap_socket at 0x0000021935DAF6A0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\util\ssl_.py", line 460, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+               │                     │     │        │           └ 'graph.facebook.com'
+               │                     │     │        └ False
+               │                     │     └ <ssl.SSLContext object at 0x0000021934B4E5D0>
+               │                     └ <socket.socket [closed] fd=-1, family=2, type=1, proto=0>
+               └ <function _ssl_wrap_socket_impl at 0x0000021935DAF880>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\util\ssl_.py", line 504, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           │           │           │                     └ 'graph.facebook.com'
+           │           │           └ <socket.socket [closed] fd=-1, family=2, type=1, proto=0>
+           │           └ <function SSLContext.wrap_socket at 0x0000021931A49DA0>
+           └ <ssl.SSLContext object at 0x0000021934B4E5D0>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           │    │               └ <classmethod(<function SSLSocket._create at 0x0000021931A4BCE0>)>
+           │    └ <class 'ssl.SSLSocket'>
+           └ <ssl.SSLContext object at 0x0000021934B4E5D0>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\ssl.py", line 1041, in _create
+    self.do_handshake()
+    │    └ <function SSLSocket.do_handshake at 0x0000021931A4D1C0>
+    └ <ssl.SSLSocket [closed] fd=-1, family=2, type=1, proto=0>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\ssl.py", line 1319, in do_handshake
+    self._sslobj.do_handshake()
+    │    └ None
+    └ <ssl.SSLSocket [closed] fd=-1, family=2, type=1, proto=0>
+
+TimeoutError: [WinError 10060] Une tentative de connexion a échoué car le parti connecté n’a pas répondu convenablement au-delà d’une certaine durée ou une connexion établie a échoué car l’hôte de connexion n’a pas répondu
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+           │    └ <function HTTPConnectionPool.urlopen at 0x0000021935E08FE0>
+           └ <urllib3.connectionpool.HTTPSConnectionPool object at 0x0000021936F496A0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              │       └ <function Retry.increment at 0x0000021935DAC680>
+              └ Retry(total=0, connect=None, read=False, redirect=None, status=None)
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\util\retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          │            │       │      └ <traceback object at 0x0000021936F4C1C0>
+          │            │       └ ReadTimeoutError("HTTPSConnectionPool(host='graph.facebook.com', port=443): Read timed out. (read timeout=None)")
+          │            └ ReadTimeoutError("HTTPSConnectionPool(host='graph.facebook.com', port=443): Read timed out. (read timeout=None)")
+          └ <function reraise at 0x0000021935D72AC0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+          └ None
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               │    └ <function HTTPConnectionPool._make_request at 0x0000021935E08E00>
+               └ <urllib3.connectionpool.HTTPSConnectionPool object at 0x0000021936F496A0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+          └ ReadTimeoutError("HTTPSConnectionPool(host='graph.facebook.com', port=443): Read timed out. (read timeout=None)")
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    │    │                         │                  │    └ None
+    │    │                         │                  └ <urllib3.connection.HTTPSConnection object at 0x0000021936F48E90>
+    │    │                         └ '/v22.0/1715785975952843'
+    │    └ <function HTTPConnectionPool._raise_timeout at 0x0000021935E08D60>
+    └ <urllib3.connectionpool.HTTPSConnectionPool object at 0x0000021936F496A0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+          └ <class 'urllib3.exceptions.ReadTimeoutError'>
+
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='graph.facebook.com', port=443): Read timed out. (read timeout=None)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Scripts\uvicorn.exe\__main__.py", line 7, in <module>
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\click\core.py", line 1161, in __call__
+    return self.main(*args, **kwargs)
+           │    │     │       └ {}
+           │    │     └ ()
+           │    └ <function BaseCommand.main at 0x0000021933A3EDE0>
+           └ <Command main>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\click\core.py", line 1082, in main
+    rv = self.invoke(ctx)
+         │    │      └ <click.core.Context object at 0x00000219315C9DF0>
+         │    └ <function Command.invoke at 0x0000021933A3F9C0>
+         └ <Command main>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\click\core.py", line 1443, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           │   │      │    │           │   └ {'host': '0.0.0.0', 'port': 8000, 'app': 'app:app', 'uds': None, 'fd': None, 'reload': False, 'reload_dirs': (), 'reload_incl...
+           │   │      │    │           └ <click.core.Context object at 0x00000219315C9DF0>
+           │   │      │    └ <function main at 0x0000021933C8BD80>
+           │   │      └ <Command main>
+           │   └ <function Context.invoke at 0x0000021933A3E340>
+           └ <click.core.Context object at 0x00000219315C9DF0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+                       │       └ {'host': '0.0.0.0', 'port': 8000, 'app': 'app:app', 'uds': None, 'fd': None, 'reload': False, 'reload_dirs': (), 'reload_incl...
+                       └ ()
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\uvicorn\main.py", line 412, in main
+    run(
+    └ <function run at 0x0000021933A7A840>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\uvicorn\main.py", line 579, in run
+    server.run()
+    │      └ <function Server.run at 0x0000021933B10EA0>
+    └ <uvicorn.server.Server object at 0x0000021933403D10>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\uvicorn\server.py", line 66, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           │       │   │    │             └ None
+           │       │   │    └ <function Server.serve at 0x0000021933B10F40>
+           │       │   └ <uvicorn.server.Server object at 0x0000021933403D10>
+           │       └ <function run at 0x0000021933332C00>
+           └ <module 'asyncio' from 'C:\\Users\\PATEGOU\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\__init__.py'>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x0000021933C67760>
+           │      └ <function Runner.run at 0x000002193334E020>
+           └ <asyncio.runners.Runner object at 0x0000021933C8F830>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_what...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000002193334BBA0>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000021933C8F830>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000021933423920>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000002193334D940>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 1986, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x00000219332979C0>
+    └ <Handle <_asyncio.TaskStepMethWrapper object at 0x0000021936F4A410>()>
+  File "C:\Users\PATEGOU\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <_asyncio.TaskStepMethWrapper object at 0x0000021936F4A410>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <_asyncio.TaskStepMethWrapper object at 0x0000021936F4A410>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <_asyncio.TaskStepMethWrapper object at 0x0000021936F4A410>()>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+                   └ <uvicorn.middleware.proxy_headers.ProxyHeadersMiddleware object at 0x0000021931956660>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+                 │    │   │      │        └ <bound method RequestResponseCycle.send of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021936...
+                 │    │   │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+                 │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+                 │    └ <fastapi.applications.FastAPI object at 0x0000021933DBF7D0>
+                 └ <uvicorn.middleware.proxy_headers.ProxyHeadersMiddleware object at 0x0000021931956660>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+                           │      │        └ <bound method RequestResponseCycle.send of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021936...
+                           │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+                           └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <bound method RequestResponseCycle.send of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021936...
+          │    │                │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.errors.ServerErrorMiddleware object at 0x0000021936EE7CB0>
+          └ <fastapi.applications.FastAPI object at 0x0000021933DBF7D0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+          │    │   │      │        └ <function ServerErrorMiddleware.__call__.<locals>._send at 0x0000021936B70180>
+          │    │   │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x0000021936EE7C20>
+          └ <starlette.middleware.errors.ServerErrorMiddleware object at 0x0000021936EE7CB0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ <function ServerErrorMiddleware.__call__.<locals>._send at 0x0000021936B70180>
+          │                            │    │    │     │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x0000021936F4A2D0>
+          │                            │    └ <fastapi.routing.APIRouter object at 0x0000021936CC3920>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x0000021936EE7C20>
+          └ <function wrap_app_handling_exceptions at 0x0000021934B98AE0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x0000021936B711C0>
+          │   │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.routing.APIRouter object at 0x0000021936CC3920>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x0000021936B711C0>
+          │    │                │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x0000021936CC3920>>
+          └ <fastapi.routing.APIRouter object at 0x0000021936CC3920>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x0000021936B711C0>
+          │     │      │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x0000021934B99F80>
+          └ APIRoute(path='/webhook', name='receive_message', methods=['POST'])
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x0000021936B711C0>
+          │    │   │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x0000021936B70AE0>
+          └ APIRoute(path='/webhook', name='receive_message', methods=['POST'])
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x0000021936B711C0>
+          │                            │    │        │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x0000021936F4A240>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x0000021936B71260>
+          └ <function wrap_app_handling_exceptions at 0x0000021934B98AE0>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x0000021936B70220>
+          │   │      └ <bound method RequestResponseCycle.receive of <uvicorn.protocols.http.httptools_impl.RequestResponseCycle object at 0x0000021...
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x0000021936B71260>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x0000021936F4A240>
+                     └ <function get_request_handler.<locals>.app at 0x0000021936B70A40>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\fastapi\routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                         └ <function run_endpoint_function at 0x0000021934B98540>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\fastapi\routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+                 │         │      └ {'request': <starlette.requests.Request object at 0x0000021936F4A240>}
+                 │         └ <function receive_message at 0x0000021936B709A0>
+                 └ Dependant(path_params=[], query_params=[], header_params=[], cookie_params=[], body_params=[], dependencies=[], security_requ...
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\app.py", line 259, in receive_message
+    return await handle_audio_message(data)
+                 │                    └ {'user_phone_number': '237691951490', 'user_profil_name': 'Professeur', 'user_conversation_id': 'wamid.HBgMMjM3NjkxOTUxNDkwFQ...
+                 └ <function handle_audio_message at 0x0000021936B70B80>
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\app.py", line 338, in handle_audio_message
+    audio_text = process_audio_messages(audio_id=data["user_audio_id"])
+                 │                               └ {'user_phone_number': '237691951490', 'user_profil_name': 'Professeur', 'user_conversation_id': 'wamid.HBgMMjM3NjkxOTUxNDkwFQ...
+                 └ <function process_audio_messages at 0x0000021935F760C0>
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\utils\__init__.py", line 28, in process_audio_messages
+    audio_path = download_audio(audio_id=audio_id)
+                 │                       └ '1715785975952843'
+                 └ <function download_audio at 0x0000021936EEE520>
+
+> File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\utils\process_audio.py", line 48, in download_audio
+    response = requests.get(url, headers=headers)
+               │        │   │            └ {'Authorization': 'Bearer EAAONvoiV94cBOZCPfvAwQDb5NxQnqg2s19Blh0qvk58Ou0KgJDmvTFZBOOv0ZCTtZAxMZC7mN3zExwuwHJpncCWRrrTUggUof8...
+               │        │   └ 'https://graph.facebook.com/v22.0/1715785975952843'
+               │        └ <function get at 0x0000021935F071A0>
+               └ <module 'requests' from 'C:\\Users\\PATEGOU\\OneDrive - PATEGOU CONSULTING\\projets\\imesy_whatsapp_bot\\imesy_whatsapp_env\\...
+
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           │              │           │         └ {'headers': {'Authorization': 'Bearer EAAONvoiV94cBOZCPfvAwQDb5NxQnqg2s19Blh0qvk58Ou0KgJDmvTFZBOOv0ZCTtZAxMZC7mN3zExwuwHJpncC...
+           │              │           └ None
+           │              └ 'https://graph.facebook.com/v22.0/1715785975952843'
+           └ <function request at 0x0000021935EDFA60>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           │       │              │           │      └ {'params': None, 'headers': {'Authorization': 'Bearer EAAONvoiV94cBOZCPfvAwQDb5NxQnqg2s19Blh0qvk58Ou0KgJDmvTFZBOOv0ZCTtZAxMZC...
+           │       │              │           └ 'https://graph.facebook.com/v22.0/1715785975952843'
+           │       │              └ 'get'
+           │       └ <function Session.request at 0x0000021935F74F40>
+           └ <requests.sessions.Session object at 0x0000021936F09310>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           │    │    │       └ {'timeout': None, 'allow_redirects': True, 'proxies': OrderedDict(), 'stream': False, 'verify': True, 'cert': None}
+           │    │    └ <PreparedRequest [GET]>
+           │    └ <function Session.send at 0x0000021935F75440>
+           └ <requests.sessions.Session object at 0x0000021936F09310>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        │       │    │          └ {'timeout': None, 'proxies': OrderedDict(), 'stream': False, 'verify': True, 'cert': None}
+        │       │    └ <PreparedRequest [GET]>
+        │       └ <function HTTPAdapter.send at 0x0000021935F74860>
+        └ <requests.adapters.HTTPAdapter object at 0x0000021936F4AA50>
+  File "C:\Users\PATEGOU\OneDrive - PATEGOU CONSULTING\projets\imesy_whatsapp_bot\imesy_whatsapp_env\Lib\site-packages\requests\adapters.py", line 713, in send
+    raise ReadTimeout(e, request=request)
+          │                      └ <PreparedRequest [GET]>
+          └ <class 'requests.exceptions.ReadTimeout'>
+
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='graph.facebook.com', port=443): Read timed out. (read timeout=None)
+2025-04-01 10:26:08 +01:00 | ERROR | __init__.py:__init__:process_audio_messages:30 - ❌ Impossible de télécharger le fichier audio.
