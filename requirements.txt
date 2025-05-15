@@ -16,3 +16,4 @@ pypdf2
 loguru
 gtts
 pytz
+pendulum
